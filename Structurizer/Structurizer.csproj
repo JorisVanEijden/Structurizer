@@ -3,6 +3,16 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
         <Nullable>enable</Nullable>
+        <LangVersion>default</LangVersion>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Structurizer</Title>
+        <Authors>Joris van Eijden</Authors>
+        <Description>Small utility to parse C header files produced by IDA and Ghidra</Description>
+        <Copyright>2024</Copyright>
+        <PackageProjectUrl>https://github.com/JorisVanEijden/Structurizer</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/JorisVanEijden/Structurizer?tab=MIT-1-ov-file#MIT-1-ov-file</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/JorisVanEijden/Structurizer</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
     </PropertyGroup>
 
     <ItemGroup>
