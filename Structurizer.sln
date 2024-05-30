@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Structurizer", "Structurizer\Structurizer.csproj", "{EC2BF132-D58C-4054-88AD-FB0A16BAFC40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Structurizer.Tests", "Structurizer.Tests\Structurizer.Tests.csproj", "{98D66E10-4D54-4D00-A012-BD74D894423D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EC2BF132-D58C-4054-88AD-FB0A16BAFC40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC2BF132-D58C-4054-88AD-FB0A16BAFC40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC2BF132-D58C-4054-88AD-FB0A16BAFC40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC2BF132-D58C-4054-88AD-FB0A16BAFC40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98D66E10-4D54-4D00-A012-BD74D894423D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98D66E10-4D54-4D00-A012-BD74D894423D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98D66E10-4D54-4D00-A012-BD74D894423D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98D66E10-4D54-4D00-A012-BD74D894423D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
