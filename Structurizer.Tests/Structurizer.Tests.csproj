@@ -10,7 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentAssertions" Version="6.12.0" />
+        <PackageReference Include="FluentAssertions" Version="6.12.0"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0"/>
         <PackageReference Include="xunit" Version="2.4.2"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
@@ -24,16 +24,16 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Structurizer\Structurizer.csproj" />
+        <ProjectReference Include="..\Structurizer\Structurizer.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Fixtures\ida.h">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="Fixtures\ghidra.h">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+        <None Update="Fixtures\ida.h">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Fixtures\ghidra.h">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>
