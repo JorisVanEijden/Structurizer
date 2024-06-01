@@ -2,12 +2,12 @@ namespace Structurizer.Tests;
 
 using Structurizer.Types;
 
-public class UnitTest1 {
+public class RealFilesTests {
     [Theory]
     [MemberData(nameof(GetTestFiles))]
-    public void Test1(string filename) {
+    public void TestFileParsing(string filename) {
         // Arrange
-        var parser = new Parser();
+        var parser = new Parser(new Configuration());
         
         // Act
         ParseResult result = parser.ParseFile(Path.Join("Fixtures", filename));
@@ -20,7 +20,7 @@ public class UnitTest1 {
     [MemberData(nameof(GetTestFiles))]
     public void Test2(string filename) {
         // Arrange
-        var parser = new Parser();
+        var parser = new Parser(new Configuration());
         
         // Act
         ParseResult result = parser.ParseFile(Path.Join("Fixtures", filename));
@@ -34,7 +34,7 @@ public class UnitTest1 {
     [MemberData(nameof(GetTestFiles))]
     public void Test3(string filename) {
         // Arrange
-        var parser = new Parser();
+        var parser = new Parser(new Configuration());
         
         // Act
         ParseResult result = parser.ParseFile(Path.Join("Fixtures", filename));
@@ -48,21 +48,21 @@ public class UnitTest1 {
     [MemberData(nameof(GetTestFiles))]
     public void Test4(string filename) {
         // Arrange
-        var parser = new Parser();
+        var parser = new Parser(new Configuration());
         
         // Act
         ParseResult result = parser.ParseFile(Path.Join("Fixtures", filename));
         
         // Assert
         result.Structs.Should().ContainKey("overlayStub");
-        result.Structs["overlayStub"].Members.Should().Contain(item => item.Name == "trap" && item.Size == 2);
+        result.Structs["overlayStub"].Members.Should().Contain(item => item.Name == "trap" && item.Size == 1 && item.Count == 2);
     }
     
     [Theory]
     [MemberData(nameof(GetTestFiles))]
     public void Test5(string filename) {
         // Arrange
-        var parser = new Parser();
+        var parser = new Parser(new Configuration());
         
         // Act
         ParseResult result = parser.ParseFile(Path.Join("Fixtures", filename));
@@ -76,21 +76,21 @@ public class UnitTest1 {
     [MemberData(nameof(GetTestFiles))]
     public void Test6(string filename) {
         // Arrange
-        var parser = new Parser();
+        var parser = new Parser(new Configuration());
         
         // Act
         ParseResult result = parser.ParseFile(Path.Join("Fixtures", filename));
         
         // Assert
         result.Structs.Should().ContainKey("bok_dataItem");
-        result.Structs["bok_dataItem"].Members.Should().Contain(item => item.Name == "data" && item.Size == 0);
+        result.Structs["bok_dataItem"].Members.Should().Contain(item => item.Name == "data" && item.Length == 0);
     }
     
     [Theory]
     [MemberData(nameof(GetTestFiles))]
     public void Test7(string filename) {
         // Arrange
-        var parser = new Parser();
+        var parser = new Parser(new Configuration());
         
         // Act
         ParseResult result = parser.ParseFile(Path.Join("Fixtures", filename));
@@ -98,6 +98,20 @@ public class UnitTest1 {
         // Assert
         result.Enums.Should().ContainKey("DisplayCombination");
         result.Enums["DisplayCombination"].Members.Count.Should().Be(14);
+    }
+    
+    [Theory]
+    [MemberData(nameof(GetTestFiles))]
+    public void Test8(string filename) {
+        // Arrange
+        var parser = new Parser(new Configuration());
+        
+        // Act
+        ParseResult result = parser.ParseFile(Path.Join("Fixtures", filename));
+        
+        // Assert
+        result.Structs.Should().ContainKey("enemyParty");
+        result.Structs["enemyParty"].Members.Should().Contain(item => item.Name == "pEnemyActor" && item.Size == 2 && item.Count == 7);
     }
     
     public static IEnumerable<object[]> GetTestFiles() {

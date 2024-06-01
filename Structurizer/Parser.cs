@@ -10,24 +10,36 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 
 public class Parser(Configuration config) {
-    private const int SizeOfByte = 1;
-    private const int SizeOfWord = 2;
-    private const int SizeOfDWord = 4;
+    private const int SizeOf8Bits = 1;
+    private const int SizeOf16Bits = 2;
+    private const int SizeOf32Bits = 4;
+    private const int SizeOf64Bits = 8;
     private readonly Dictionary<string, EnumType> _enums = new();
     private readonly Dictionary<string, StructType> _structs = new();
     
-    public Parser() : this(new Configuration()) {
-    }
+    private readonly Dictionary<string, Variable> _typeDefs = new() {
+        ["__int8"] = new Variable("__int8", "__int8", SizeOf8Bits),
+        ["__int16"] = new Variable("__int16", "__int16", SizeOf16Bits),
+        ["__int32"] = new Variable("__int32", "__int32", SizeOf32Bits),
+        ["__int64"] = new Variable("__int64", "__int64", SizeOf64Bits),
+        ["char"] = new Variable("char", "char", SizeOf8Bits),
+        ["short"] = new Variable("short", "short", SizeOf16Bits),
+        ["int"] = new Variable("int", "int", SizeOf16Bits),
+        ["long"] = new Variable("long", "long", SizeOf32Bits),
+        ["_BYTE"] = new Variable("unsigned char", "unsigned char", SizeOf8Bits),
+        ["size_t"] = new Variable("size_t", "size_t", config.DefaultSizeT),
+        ["pointer"] = new Variable("pointer", "pointer", config.DefaultPointerSize)
+    };
     
     public ParseResult ParseFile(string headerFilePath) {
-        var result = new ParseResult();
         string text = File.ReadAllText(headerFilePath);
-        text = PreProcess(text);
         
         File.WriteAllText("debug.h", text);
         
         try {
-            ParseSource(text);
+            ParseResult result = ParseSource(text);
+            
+            return result;
         } finally {
             // Write formatted enums and structs to file
             File.WriteAllText($"{headerFilePath}_enums.json", JsonSerializer.Serialize(_enums, new JsonSerializerOptions {
@@ -37,16 +49,62 @@ public class Parser(Configuration config) {
                 WriteIndented = true
             }));
         }
-        
-        result.Enums = _enums;
-        result.Structs = _structs;
-        
-        return result;
     }
     
-    private void ParseSource(string text) {
+    public ParseResult ParseSource(string text) {
+        text = PreProcess(text);
+        ParseTypeDefs(text);
         ParseEnums(text);
         ParseStructs(text);
+        
+        return new ParseResult {
+            Enums = _enums,
+            Structs = _structs,
+            TypeDefs = _typeDefs
+        };
+    }
+    
+    private void ParseTypeDefs(string text) {
+        const string typedefPattern = @"typedef(\s+(\w+))+;";
+        MatchCollection matches = Regex.Matches(text, typedefPattern);
+        
+        foreach (Match match in matches) {
+            ParseTypeDef(match);
+        }
+    }
+    
+    private void ParseTypeDef(Match match) {
+        string[] memberParts = match.Groups[2].Captures.Select(capture => capture.Value).ToArray();
+        var memberSize = 0;
+        if (memberParts.Length > 2) {
+            switch (memberParts[0]) {
+                case "long":
+                    memberParts = [$"{memberParts[0]} {memberParts[1]}", memberParts[2]];
+                    memberSize = GetSizeOf(memberParts[0]);
+                    
+                    break;
+                case "unsigned":
+                case "signed":
+                    memberSize = GetSizeOf(memberParts[1]);
+                    string sign = memberParts[0].Trim();
+                    memberParts = memberParts[1..];
+                    memberParts[0] = $"{sign} {memberParts[0]}";
+                    
+                    break;
+                case "struct":
+                    // Skip structs for now
+                    return;
+                
+                default:
+                    memberSize = GetSizeOf(memberParts[1]);
+                    
+                    break;
+            }
+        }
+        string memberType = memberParts[0].Trim();
+        string memberName = memberParts[1].Trim();
+        var variable = new Variable(memberName, memberType, memberSize);
+        _typeDefs[memberName] = variable;
     }
     
     private void ParseStructs(string text) {
@@ -90,11 +148,16 @@ public class Parser(Configuration config) {
             memberParts = HandleAlignment(structType, alignMatch, memberParts);
         }
         
-        if (memberParts[0] == "unsigned" || memberParts[0] == "signed") {
-            memberParts = HandleSign(memberParts);
+        if (memberParts.Length > 2
+            && (memberParts[0] == "unsigned"
+                || memberParts[0] == "signed"
+                || memberParts[0] == "long")) {
+            string token = memberParts[0].Trim();
+            memberParts = memberParts[1..];
+            memberParts[0] = $"{token} {memberParts[0]}";
         }
         
-        if (memberParts[0] == "struct" || memberParts[0] == "enum") {
+        if (memberParts[0] == "struct" || memberParts[0] == "enum" || memberParts[0] == "union") {
             memberParts = memberParts[1..];
         }
         
@@ -107,25 +170,26 @@ public class Parser(Configuration config) {
             ? HandlePointer(nearPointer, ref memberType, ref memberName)
             : GetSizeOf(memberType);
         
+        var memberCount = 1;
         if (memberName.Contains('[')) {
-            memberName = HandleArray(memberName, ref memberSize);
+            memberName = HandleArray(memberName, out memberCount);
         }
         
         if (memberSize > maxSize) {
             maxSize = memberSize;
         }
         
-        var variable = new Variable(memberName, memberType, memberSize);
+        var variable = new Variable(memberName, memberType, memberSize, memberCount);
         structType.Members.Add(variable);
         structType.Size += variable.Size;
         
         return maxSize;
     }
     
-    private static string HandleArray(string memberName, ref int memberSize) {
+    private static string HandleArray(string memberName, out int memberCount) {
         string[] arrayParts = memberName.Split('[', ']');
         memberName = arrayParts[0].Trim();
-        memberSize *= (int)IntParse(arrayParts[1]);
+        memberCount = (int)IntParse(arrayParts[1]);
         
         return memberName;
     }
@@ -150,18 +214,12 @@ public class Parser(Configuration config) {
         return nearPointer;
     }
     
-    private static string[] HandleSign(string[] memberParts) {
-        string sign = memberParts[0].Trim();
-        memberParts = memberParts[1..];
-        memberParts[0] = $"{sign} {memberParts[0]}";
-        
-        return memberParts;
-    }
-    
     private static string[] HandleAlignment(StructType structType, Match alignMatch, string[] memberParts) {
         var alignment = int.Parse(alignMatch.Groups[1].Value);
         // Increase the size of the previous variable to align this one with the specified number of bytes
-        structType.Members[^1].Size += structType.Size % alignment;
+        int delta = structType.Size % alignment;
+        structType.Members[^1].Size += delta;
+        structType.Size += delta;
         memberParts = memberParts[1..];
         
         return memberParts;
@@ -217,23 +275,25 @@ public class Parser(Configuration config) {
     }
     
     private int GetSizeOf(string type) {
+        var multiplier = 1;
         type = type.Replace("unsigned", "")
             .Replace("signed", "")
             .Trim();
+        if (type.StartsWith("long ")) {
+            type = type[(type.LastIndexOf(" ", StringComparison.Ordinal) + 1)..];
+            multiplier = 2;
+        }
         
-        return type switch {
-            "char" => SizeOfByte,
-            "_BYTE" => SizeOfByte,
-            "__int8" => SizeOfByte,
-            "int" => SizeOfWord,
-            "__int16" => SizeOfWord,
-            "__int32" => SizeOfDWord,
-            "size_t" => config.DefaultSizeT,
-            _ => GetDynamicSizeOf(type)
-        };
+        int size = GetDynamicSizeOf(type);
+        
+        return size * multiplier;
     }
     
     private int GetDynamicSizeOf(string type) {
+        if (_typeDefs.TryGetValue(type, out Variable? variable)) {
+            return variable.Size;
+        }
+        
         if (_enums.TryGetValue(type, out EnumType? enumType)) {
             return enumType.MemberSize;
         }
@@ -242,7 +302,11 @@ public class Parser(Configuration config) {
             return structType.Size;
         }
         
-        throw new Exception($"Could not determine size of type '{type}'");
+        if (type.StartsWith("pointer") && int.TryParse(type[7..], out int sizeInBits)) {
+            return sizeInBits / 8;
+        }
+        
+        throw new ArgumentException($"Could not determine size of type '{type}'", nameof(type));
     }
     
     private static long IntParse(string input) {
