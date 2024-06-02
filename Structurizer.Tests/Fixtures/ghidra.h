@@ -1,16 +1,16 @@
-typedef unsigned char undefined;
+typedef unsigned char   undefined;
 
-typedef unsigned char bool;
-typedef unsigned char byte;
-typedef unsigned long dword;
-typedef long long longlong;
-typedef unsigned int uint;
-typedef unsigned long ulong;
-typedef unsigned char undefined1;
-typedef unsigned int undefined2;
-typedef unsigned long undefined4;
-typedef unsigned short ushort;
-typedef unsigned int word;
+typedef unsigned char    bool;
+typedef unsigned char    byte;
+typedef unsigned long    dword;
+typedef long long    longlong;
+typedef unsigned int    uint;
+typedef unsigned long    ulong;
+typedef unsigned char    undefined1;
+typedef unsigned int    undefined2;
+typedef unsigned long    undefined4;
+typedef unsigned short    ushort;
+typedef unsigned int    word;
 typedef void _IO_lock_t;
 
 typedef struct _IO_marker _IO_marker, *P_IO_marker;
@@ -25,47 +25,45 @@ typedef __quad_t __off64_t;
 
 typedef ulong size_t;
 
-struct _IO_FILE
-{
+struct _IO_FILE {
     int _flags;
-    char* _IO_read_ptr;
-    char* _IO_read_end;
-    char* _IO_read_base;
-    char* _IO_write_base;
-    char* _IO_write_ptr;
-    char* _IO_write_end;
-    char* _IO_buf_base;
-    char* _IO_buf_end;
-    char* _IO_save_base;
-    char* _IO_backup_base;
-    char* _IO_save_end;
-    struct _IO_marker* _markers;
-    struct _IO_FILE* _chain;
+    char *_IO_read_ptr;
+    char *_IO_read_end;
+    char *_IO_read_base;
+    char *_IO_write_base;
+    char *_IO_write_ptr;
+    char *_IO_write_end;
+    char *_IO_buf_base;
+    char *_IO_buf_end;
+    char *_IO_save_base;
+    char *_IO_backup_base;
+    char *_IO_save_end;
+    struct _IO_marker *_markers;
+    struct _IO_FILE *_chain;
     int _fileno;
     int _flags2;
     __off_t _old_offset;
     ushort _cur_column;
     char _vtable_offset;
     char _shortbuf[1];
-    _IO_lock_t* _lock;
+    _IO_lock_t *_lock;
     __off64_t _offset;
-    void* __pad1;
-    void* __pad2;
-    void* __pad3;
-    void* __pad4;
+    void *__pad1;
+    void *__pad2;
+    void *__pad3;
+    void *__pad4;
     size_t __pad5;
     int _mode;
     char _unused2[40];
 };
 
-struct _IO_marker
-{
-    struct _IO_marker* _next;
-    struct _IO_FILE* _sbuf;
+struct _IO_marker {
+    struct _IO_marker *_next;
+    struct _IO_FILE *_sbuf;
     int _pos;
 };
 
-typedef void* __gnuc_va_list;
+typedef void *__gnuc_va_list;
 
 typedef int intptr_t;
 
@@ -73,25 +71,22 @@ typedef struct _IO_FILE FILE;
 
 typedef uint __mode_t;
 
-typedef enum $FB0B2E4B11C33F202C8E57FBCC18F8B1
-{
-    altFormatBit = 1,
-    leftJustBit = 2,
-    notZeroBit = 4,
-    fillZerosBit = 8,
-    isLongBit = 16,
-    farPtrBit = 32,
-    alt0xBit = 64,
-    floatBit = 128,
-    LongDoubleBit = 256
+typedef enum $FB0B2E4B11C33F202C8E57FBCC18F8B1 {
+    altFormatBit=1,
+    leftJustBit=2,
+    notZeroBit=4,
+    fillZerosBit=8,
+    isLongBit=16,
+    farPtrBit=32,
+    alt0xBit=64,
+    floatBit=128,
+    LongDoubleBit=256
 } $FB0B2E4B11C33F202C8E57FBCC18F8B1;
 
 typedef struct activeSpellEffect activeSpellEffect, *PactiveSpellEffect;
 
-struct activeSpellEffect
-{
-    word SpellNumber
-    ?;
+struct activeSpellEffect {
+    word SpellNumber?;
     word investedCost;
     word duration;
     word field_6;
@@ -103,20 +98,15 @@ typedef struct actor actor, *Pactor;
 
 typedef struct attributeValues attributeValues, *PattributeValues;
 
-struct attributeValues
-{
-    byte max
-    ?;
-    byte current
-    ?;
-    byte currentEffective
-    ?;
+struct attributeValues {
+    byte max?;
+    byte current?;
+    byte currentEffective?;
     byte experience;
     byte modifier;
 };
 
-struct actor
-{
+struct actor {
     pointer name;
     word knownSpells1;
     word knownSpells2;
@@ -137,37 +127,34 @@ struct actor
     struct attributeValues lockpick;
     struct attributeValues scouting;
     struct attributeValues stealth;
-    byte actorNumber
-    ?;
+    byte actorNumber?;
     pointer32 inventory;
     pointer pCombatData;
 };
 
-typedef enum actorAttribute
-{
-    Health = 0,
-    Stamina = 1,
-    Speed = 2,
-    Strength = 3,
-    Defense = 4,
-    AccuracyCrossbow = 5,
-    AccuracyMelee = 6,
-    AccuracyCasting = 7,
-    Assessment = 8,
-    ArmorCraft = 9,
-    WeaponCraft = 10,
-    Barding = 11,
-    Haggling = 12,
-    LockPicking = 13,
-    Scouting = 14,
-    Stealth = 15,
-    HealthStaminaCombo = 16
+typedef enum actorAttribute {
+    Health=0,
+    Stamina=1,
+    Speed=2,
+    Strength=3,
+    Defense=4,
+    AccuracyCrossbow=5,
+    AccuracyMelee=6,
+    AccuracyCasting=7,
+    Assessment=8,
+    ArmorCraft=9,
+    WeaponCraft=10,
+    Barding=11,
+    Haggling=12,
+    LockPicking=13,
+    Scouting=14,
+    Stealth=15,
+    HealthStaminaCombo=16
 } actorAttribute;
 
 typedef struct actorFaces actorFaces, *PactorFaces;
 
-struct actorFaces
-{
+struct actorFaces {
     word actorNumber;
     undefined field1_0x2;
     undefined field2_0x3;
@@ -215,8 +202,7 @@ struct actorFaces
 
 typedef struct actorStatusEffects actorStatusEffects, *PactorStatusEffects;
 
-struct actorStatusEffects
-{
+struct actorStatusEffects {
     byte sick;
     byte plagued;
     byte poisoned;
@@ -228,8 +214,7 @@ struct actorStatusEffects
 
 typedef struct animationRecord animationRecord, *PanimationRecord;
 
-struct animationRecord
-{
+struct animationRecord {
     word recordNumber;
     word numberOfPages;
     dword pResourceData;
@@ -362,8 +347,7 @@ struct animationRecord
 
 typedef struct animationTag animationTag, *PanimationTag;
 
-struct animationTag
-{
+struct animationTag {
     word animationRecordNumber;
     word tagNumber;
     word startFrame;
@@ -400,8 +384,7 @@ struct animationTag
 
 typedef struct area area, *Parea;
 
-struct area
-{
+struct area {
     word xPosition; /* X Position */
     word yPosition; /* Y position */
     word width; /* Width */
@@ -410,30 +393,28 @@ struct area
 
 typedef char ascii;
 
-typedef enum attributeFlags
-{
-    Health_ = 1,
-    Stamina_ = 2,
-    Speed_ = 4,
-    Strength_ = 8,
-    Defense_ = 16,
-    AccuracyCrossbow_ = 32,
-    AccuracyMelee_ = 64,
-    AccuracyCasting_ = 128,
-    Assessment_ = 256,
-    ArmorCraft_ = 512,
-    WeaponCraft_ = 1024,
-    Barding_ = 2048,
-    Haggling_ = 4096,
-    LockPicking_ = 8192,
-    Scouting_ = 16384,
-    Stealth_ = 32768
+typedef enum attributeFlags {
+    Health_=1,
+    Stamina_=2,
+    Speed_=4,
+    Strength_=8,
+    Defense_=16,
+    AccuracyCrossbow_=32,
+    AccuracyMelee_=64,
+    AccuracyCasting_=128,
+    Assessment_=256,
+    ArmorCraft_=512,
+    WeaponCraft_=1024,
+    Barding_=2048,
+    Haggling_=4096,
+    LockPicking_=8192,
+    Scouting_=16384,
+    Stealth_=32768
 } attributeFlags;
 
 typedef struct bitmap bitmap, *Pbitmap;
 
-struct bitmap
-{
+struct bitmap {
     word imageDataSegment_or_EMS_PageNr;
     word imageDataOffset;
     word flags;
@@ -443,20 +424,17 @@ struct bitmap
 
 typedef struct bmxHeader bmxHeader, *PbmxHeader;
 
-struct bmxHeader
-{
+struct bmxHeader {
     word magic;
     word compression;
     word amount;
-    word compressedDataSize
-    ?;
+    word compressedDataSize?;
     dword nrOfBytes;
 };
 
 typedef struct bNameEntry bNameEntry, *PbNameEntry;
 
-struct bNameEntry
-{
+struct bNameEntry {
     ascii name;
     undefined field1_0x1;
     undefined field2_0x2;
@@ -464,8 +442,7 @@ struct bNameEntry
     byte number;
     undefined field5_0x5;
     undefined field6_0x6;
-    byte colorSet
-    ?;
+    byte colorSet?;
 };
 
 typedef struct bok_data bok_data, *Pbok_data;
@@ -474,8 +451,7 @@ typedef struct bok_paragraph bok_paragraph, *Pbok_paragraph;
 
 typedef struct bok_fontInfo bok_fontInfo, *Pbok_fontInfo;
 
-struct bok_fontInfo
-{
+struct bok_fontInfo {
     word font;
     word yOffset;
     byte field_4;
@@ -485,8 +461,7 @@ struct bok_fontInfo
     word fontFlags;
 };
 
-struct bok_paragraph
-{
+struct bok_paragraph {
     word x_offset;
     word width;
     word lineSpacing;
@@ -497,16 +472,14 @@ struct bok_paragraph
     word alignment;
 };
 
-struct bok_data
-{
+struct bok_data {
     struct bok_paragraph paragraph;
     struct bok_fontInfo fontInfo;
     word bool_field_1A;
     word x_offset2;
     word y_offset;
     word x_offset1;
-    word max_x
-    ?;
+    word max_x?;
     word field_24;
     word field_26;
     word field_28;
@@ -548,16 +521,14 @@ struct bok_data
 
 typedef struct bok_dataItem bok_dataItem, *Pbok_dataItem;
 
-struct bok_dataItem
-{
+struct bok_dataItem {
     byte type;
     byte data;
 };
 
 typedef struct bok_imageInfo bok_imageInfo, *Pbok_imageInfo;
 
-struct bok_imageInfo
-{
+struct bok_imageInfo {
     word x_offset;
     word y_offset;
     word width_or_imageNumber;
@@ -566,23 +537,19 @@ struct bok_imageInfo
 
 typedef struct bok_page bok_page, *Pbok_page;
 
-struct bok_page
-{
+struct bok_page {
     word x_offset;
     word y_offset;
     word width;
     word height;
-    word pageRelatedNumber
-    ?;
+    word pageRelatedNumber?;
     word pageNumber;
     word previousPageNumber;
     word nextPageNumber;
-    word nextPage
-    ?;
+    word nextPage?;
     word field_12;
     word nrOfImages;
-    word nrOfReservedAreas
-    ?;
+    word nrOfReservedAreas?;
     word showPageNumber;
     dword field_1A;
     struct bok_paragraph paragraph;
@@ -592,16 +559,14 @@ struct bok_page
 
 typedef struct bok_pageList bok_pageList, *Pbok_pageList;
 
-struct bok_pageList
-{
+struct bok_pageList {
     word nrOfPages;
     pointer32 pBokPage;
 };
 
 typedef struct chapterDataPart1 chapterDataPart1, *PchapterDataPart1;
 
-struct chapterDataPart1
-{
+struct chapterDataPart1 {
     word ChapterNumber;
     dword field_2;
     dword field_6;
@@ -612,8 +577,7 @@ struct chapterDataPart1
 
 typedef struct color color, *Pcolor;
 
-struct color
-{
+struct color {
     byte red;
     byte green;
     byte blue;
@@ -621,22 +585,16 @@ struct color
 
 typedef struct combatData combatData, *PcombatData;
 
-struct combatData
-{
-    pointer targetActor
-    ?;
+struct combatData {
+    pointer targetActor?;
     word creatureType;
     byte x_on_grid;
     byte y_on_grid;
-    byte target_x_on_grid
-    ?;
-    byte target_y_on_grid
-    ?;
-    byte combatStatus
-    ?;
+    byte target_x_on_grid?;
+    byte target_y_on_grid?;
+    byte combatStatus?;
     byte field_9;
-    word activeSpellEffectSlot
-    ?;
+    word activeSpellEffectSlot?;
     byte field_C;
     byte field_D;
     byte field_E;
@@ -651,41 +609,36 @@ struct combatData
 
 typedef struct combatGridCell combatGridCell, *PcombatGridCell;
 
-struct combatGridCell
-{
+struct combatGridCell {
     pointer pActor;
     word grid_element;
-    word value
-    ?;
+    word value?;
 };
 
-typedef enum combatStatusFlags
-{
-    unknown_combatStatus_1 = 1,
-    unknown_combatStatus_2 = 2,
-    unknown_combatStatus_4 = 4,
-    combatStatus_defending = 8,
-    unknown_combatStatus_16 = 16,
-    combatStatus_poisoned = 32,
-    unknown_combatStatus_64 = 64,
-    unknown_combatStatus_128 = 128
+typedef enum combatStatusFlags {
+    unknown_combatStatus_1=1,
+    unknown_combatStatus_2=2,
+    unknown_combatStatus_4=4,
+    combatStatus_defending=8,
+    unknown_combatStatus_16=16,
+    combatStatus_poisoned=32,
+    unknown_combatStatus_64=64,
+    unknown_combatStatus_128=128
 } combatStatusFlags;
 
-typedef enum conditionNumber
-{
-    condition_sick = 0,
-    condition_plagued = 1,
-    condition_poisoned = 2,
-    condition_drunk = 3,
-    condition_healing = 4,
-    condition_starving = 5,
-    condition_nearDeath = 6
+typedef enum conditionNumber {
+    condition_sick=0,
+    condition_plagued=1,
+    condition_poisoned=2,
+    condition_drunk=3,
+    condition_healing=4,
+    condition_starving=5,
+    condition_nearDeath=6
 } conditionNumber;
 
 typedef struct config config, *Pconfig;
 
-struct config
-{
+struct config {
     byte stepSize;
     byte turnSize;
     byte levelOfDetail;
@@ -693,12 +646,11 @@ struct config
     byte flags;
 };
 
-typedef enum configFlags
-{
-    soundOn = 1,
-    musicOn = 2,
-    combatMusic = 4,
-    playIntro = 8,
+typedef enum configFlags {
+    soundOn=1,
+    musicOn=2,
+    combatMusic=4,
+    playIntro=8,
     cdmusic?=16
 } configFlags;
 
@@ -714,8 +666,7 @@ typedef struct containerLocationWorld containerLocationWorld, *PcontainerLocatio
 
 typedef struct containerLocationActor containerLocationActor, *PcontainerLocationActor;
 
-struct containerLocationActor
-{
+struct containerLocationActor {
     word field_0;
     word field_2;
     word actorNr;
@@ -724,25 +675,20 @@ struct containerLocationActor
     word field_A;
 };
 
-struct containerLocationWorld
-{
+struct containerLocationWorld {
     byte zone;
     byte minMaxChapter;
-    word worldItemId
-    ?;
+    word worldItemId?;
     dword X;
     dword Y;
 };
 
-union containerLocation
-{
+union containerLocation {
     struct containerLocationWorld world;
     struct containerLocationActor actor;
 };
 
-struct containerMetaData
-{
-    /* The 1st 12 bytes are probably a union of three types */
+struct containerMetaData { /* The 1st 12 bytes are probably a union of three types */
     union containerLocation location;
     byte containerType;
     byte numberOfItems;
@@ -750,15 +696,13 @@ struct containerMetaData
     byte dataTypes;
 };
 
-struct inventoryItem
-{
+struct inventoryItem {
     byte objectId;
     byte variable;
     word itemFlags;
 };
 
-struct container
-{
+struct container {
     byte field_0;
     byte field_1;
     dword offsetInSaveFile;
@@ -768,8 +712,7 @@ struct container
 
 typedef struct containerData_dialog containerData_dialog, *PcontainerData_dialog;
 
-struct containerData_dialog
-{
+struct containerData_dialog {
     byte field_0;
     byte flag_field_1;
     dword dialogId;
@@ -777,14 +720,11 @@ struct containerData_dialog
 
 typedef struct containerData_encounter containerData_encounter, *PcontainerData_encounter;
 
-struct containerData_encounter
-{
+struct containerData_encounter {
     word globalDataKey1;
     word globalDataKey2;
-    byte gds_number
-    ?;
-    byte gds_letter
-    ?;
+    byte gds_number?;
+    byte gds_letter?;
     byte field_6;
     byte x;
     byte y;
@@ -792,8 +732,7 @@ struct containerData_encounter
 
 typedef struct containerData_lock containerData_lock, *PcontainerData_lock;
 
-struct containerData_lock
-{
+struct containerData_lock {
     byte flags;
     byte difficulty;
     byte puzzleChest;
@@ -802,8 +741,7 @@ struct containerData_lock
 
 typedef struct containerData_shop containerData_shop, *PcontainerData_shop;
 
-struct containerData_shop
-{
+struct containerData_shop {
     byte field_0;
     byte markupPercentage;
     byte field_2;
@@ -823,74 +761,66 @@ struct containerData_shop
 
 typedef struct containerData_timestamp containerData_timestamp, *PcontainerData_timestamp;
 
-struct containerData_timestamp
-{
+struct containerData_timestamp {
     dword double_seconds;
 };
 
 typedef struct containerData_unknown20 containerData_unknown20, *PcontainerData_unknown20;
 
-struct containerData_unknown20
-{
+struct containerData_unknown20 {
     word field_0;
 };
 
-typedef enum containerDataTypes
-{
-    dataType_Lock = 1,
-    dataType_Dialog = 2,
-    dataType_Shop = 4,
-    dataType_Encounter = 8,
-    dataType_TimeStamp = 16,
-    dataType_unknown20 = 32,
-    dataTypeFlag_1 = 64,
-    dataTypeFlag_2 = 128
+typedef enum containerDataTypes {
+    dataType_Lock=1,
+    dataType_Dialog=2,
+    dataType_Shop=4,
+    dataType_Encounter=8,
+    dataType_TimeStamp=16,
+    dataType_unknown20=32,
+    dataTypeFlag_1=64,
+    dataTypeFlag_2=128
 } containerDataTypes;
 
-typedef enum containerType
-{
-    containerType_0 = 0,
-    containerType_inventory = 1,
-    containerType_2 = 2,
-    containerType_3 = 3,
-    containerType_4 = 4,
-    containerType_5 = 5,
-    containerType_fixedWorldItem = 6,
-    containerType_7 = 7,
-    containerType_8 = 8,
-    containerType_9 = 9
+typedef enum containerType {
+    containerType_0=0,
+    containerType_inventory=1,
+    containerType_2=2,
+    containerType_3=3,
+    containerType_4=4,
+    containerType_5=5,
+    containerType_fixedWorldItem=6,
+    containerType_7=7,
+    containerType_8=8,
+    containerType_9=9
 } containerType;
 
 typedef struct Coordinates_64k Coordinates_64k, *PCoordinates_64k;
 
-struct Coordinates_64k
-{
+struct Coordinates_64k {
     dword X;
     dword Y;
 };
 
-typedef enum ctypes
-{
-    space = 1,
-    digit = 2,
-    upper = 4,
-    lower = 8,
-    hexad = 16,
-    cntrl = 32,
-    punct = 64
+typedef enum ctypes {
+    space=1,
+    digit=2,
+    upper=4,
+    lower=8,
+    hexad=16,
+    cntrl=32,
+    punct=64
 } ctypes;
 
-typedef enum currency
-{
-    currency_gold_fractional = 0,
-    currency_gold_silver = 1,
-    currency_sovereigns_royals = 2
+typedef enum currency {
+    currency_gold_fractional=0,
+    currency_gold_silver=1,
+    currency_sovereigns_royals=2
 } currency;
 
 typedef struct def_bkgr def_bkgr, *Pdef_bkgr;
 
-struct def_bkgr
-{
+struct def_bkgr {
     undefined field0_0x0;
     undefined field1_0x1;
     word field_2;
@@ -911,8 +841,7 @@ struct def_bkgr
 
 typedef struct def_bloc def_bloc, *Pdef_bloc;
 
-struct def_bloc
-{
+struct def_bloc {
     undefined field0_0x0;
     undefined field1_0x1;
     dword dialogId;
@@ -922,8 +851,7 @@ struct def_bloc
 
 typedef struct def_comb def_comb, *Pdef_comb;
 
-struct def_comb
-{
+struct def_comb {
     word field_0;
     dword encounterNumber;
     dword dialogId1;
@@ -968,8 +896,7 @@ struct def_comb
     undefined field41_0x38;
     undefined field42_0x39;
     byte field_3A;
-    word monsterNumber
-    ?;
+    word monsterNumber?;
     undefined field45_0x3d;
     undefined field46_0x3e;
     undefined field47_0x3f;
@@ -1311,8 +1238,7 @@ struct def_comb
 
 typedef struct def_comm def_comm, *Pdef_comm;
 
-struct def_comm
-{
+struct def_comm {
     byte field_0;
     byte field_1;
     byte field_2;
@@ -1327,8 +1253,7 @@ struct def_comm
 
 typedef struct def_dial def_dial, *Pdef_dial;
 
-struct def_dial
-{
+struct def_dial {
     byte field_0;
     byte field_1;
     dword dialogId;
@@ -1337,8 +1262,7 @@ struct def_dial
 
 typedef struct def_disa def_disa, *Pdef_disa;
 
-struct def_disa
-{
+struct def_disa {
     byte field_0;
     byte field_1;
     byte chance;
@@ -1349,8 +1273,7 @@ struct def_disa
 
 typedef struct def_enab def_enab, *Pdef_enab;
 
-struct def_enab
-{
+struct def_enab {
     byte field_0;
     byte field_1;
     byte chance;
@@ -1361,8 +1284,7 @@ struct def_enab
 
 typedef struct def_file_entry_header def_file_entry_header, *Pdef_file_entry_header;
 
-struct def_file_entry_header
-{
+struct def_file_entry_header {
     word field_0;
     dword field_2;
     dword dialogId;
@@ -1370,17 +1292,12 @@ struct def_file_entry_header
 
 typedef struct def_file_struct def_file_struct, *Pdef_file_struct;
 
-struct def_file_struct
-{
+struct def_file_struct {
     word type;
-    byte start_x
-    ?;
-    byte end_y
-    ?;
-    byte end_x
-    ?;
-    byte start_y
-    ?;
+    byte start_x?;
+    byte end_y?;
+    byte end_x?;
+    byte start_y?;
     dword entryNumber;
     byte field_A;
     word global_key1;
@@ -1389,39 +1306,35 @@ struct def_file_struct
     word field_11;
 };
 
-typedef enum def_files
-{
-    def_bkgr.dat = 0,
-    def_comb.dat = 1,
-    def_comm.dat = 2,
-    def_dial.dat = 3,
-    def_heal.dat = 4,
-    def_soun.dat = 5,
-    def_town.dat = 6,
-    def_trap.dat = 7,
-    def_zone.dat = 8,
-    def_disa.dat = 9,
-    def_enab.dat = 10,
-    def_bloc.dat = 11
+typedef enum def_files {
+    def_bkgr.dat=0,
+    def_comb.dat=1,
+    def_comm.dat=2,
+    def_dial.dat=3,
+    def_heal.dat=4,
+    def_soun.dat=5,
+    def_town.dat=6,
+    def_trap.dat=7,
+    def_zone.dat=8,
+    def_disa.dat=9,
+    def_enab.dat=10,
+    def_bloc.dat=11
 } def_files;
 
 typedef struct def_soun def_soun, *Pdef_soun;
 
-struct def_soun
-{
+struct def_soun {
     byte field_0;
     byte field_1;
     byte chance;
-    word aoudioId
-    ?;
+    word aoudioId?;
     byte field_5;
     byte field_6;
 };
 
 typedef struct def_town def_town, *Pdef_town;
 
-struct def_town
-{
+struct def_town {
     undefined field0_0x0;
     undefined field1_0x1;
     word field_2;
@@ -1444,8 +1357,7 @@ typedef struct def_trap def_trap, *Pdef_trap;
 
 typedef struct unknownStruct339 unknownStruct339, *PunknownStruct339;
 
-struct unknownStruct339
-{
+struct unknownStruct339 {
     undefined field0_0x0;
     word field_1;
     undefined field2_0x3;
@@ -1786,8 +1698,7 @@ struct unknownStruct339
     byte field_152;
 };
 
-struct def_trap
-{
+struct def_trap {
     undefined field0_0x0;
     undefined field1_0x1;
     dword encounterNumber;
@@ -1847,10 +1758,8 @@ typedef struct def_zone def_zone, *Pdef_zone;
 
 typedef struct location location, *Plocation;
 
-struct location
-{
-    byte zoneNumber
-    ?;
+struct location {
+    byte zoneNumber?;
     byte tileX;
     byte tileY;
     byte tileXoffset;
@@ -1858,8 +1767,7 @@ struct location
     word zRotation;
 };
 
-struct def_zone
-{
+struct def_zone {
     undefined field0_0x0;
     undefined field1_0x1;
     struct location location;
@@ -1913,32 +1821,28 @@ typedef struct dialogAction_SetReturnValue dialogAction_SetReturnValue, *Pdialog
 
 typedef struct dialogAction_ResizeDialog dialogAction_ResizeDialog, *PdialogAction_ResizeDialog;
 
-struct dialogAction_Teleport
-{
+struct dialogAction_Teleport {
     word destinationId;
     word field_2;
     word field_4;
     word field_6;
 };
 
-struct dialogAction_ResizeDialog
-{
+struct dialogAction_ResizeDialog {
     word x;
     word y;
     word width;
     word height;
 };
 
-struct dialogAction_SubAction
-{
+struct dialogAction_SubAction {
     word type;
     word field_2;
     word field_4;
     word field_6;
 };
 
-struct dialogAction_GiveItem
-{
+struct dialogAction_GiveItem {
     byte objectId;
     byte actor;
     word amount;
@@ -1946,30 +1850,26 @@ struct dialogAction_GiveItem
     word unused;
 };
 
-struct dialogAction_UseItem
-{
+struct dialogAction_UseItem {
     word objectId;
     word amount;
     word field_4;
     word field_6;
 };
 
-struct dialogAction_Heal
-{
+struct dialogAction_Heal {
     word target;
     word amount;
     word field_4;
     word field_6;
 };
 
-struct dialogAction_SetTemporaryFlag
-{
+struct dialogAction_SetTemporaryFlag {
     dword globalKey;
     dword time;
 };
 
-struct dialogAction_ChangeAttribute
-{
+struct dialogAction_ChangeAttribute {
     byte target;
     byte type;
     word attribute;
@@ -1977,39 +1877,34 @@ struct dialogAction_ChangeAttribute
     word maxValue;
 };
 
-struct dialogAction_SetTimer
-{
+struct dialogAction_SetTimer {
     byte type;
     byte flag;
     word key;
     dword time;
 };
 
-struct dialogAction_LearnSpell
-{
+struct dialogAction_LearnSpell {
     word actor;
     word spellNumber;
     word field_4;
     word field_6;
 };
 
-struct dialogAction_GetAttribute
-{
+struct dialogAction_GetAttribute {
     word target; /* 1 = max from whole party, 2+ = actor from corresponding variable slot */
     word attribute;
     dword field_4;
 };
 
-struct dialogAction_ApplyCondition
-{
+struct dialogAction_ApplyCondition {
     word target;
     word condition;
     word minValue;
     word maxValue;
 };
 
-struct dialogAction_SetGlobalValue
-{
+struct dialogAction_SetGlobalValue {
     word key;
     byte andMask;
     byte orMask;
@@ -2018,63 +1913,55 @@ struct dialogAction_SetGlobalValue
     word value;
 };
 
-struct dialogAction_PlaySound
-{
+struct dialogAction_PlaySound {
     word audioId;
     word field_2;
     word field_4;
     word field_6;
 };
 
-struct dialogAction_PushDialogEntry
-{
+struct dialogAction_PushDialogEntry {
     dword offset;
     word field_4;
     word field_6;
 };
 
-struct dialogAction_RemoveItem
-{
+struct dialogAction_RemoveItem {
     word objectId;
     word amount;
     word field_4;
     word field_6;
 };
 
-struct dialogAction_ChangeParty
-{
+struct dialogAction_ChangeParty {
     word partySize;
     word Actor1;
     word Actor2;
     word Actor3;
 };
 
-struct dialogAction_AdvanceTime
-{
+struct dialogAction_AdvanceTime {
     word amount;
     word field_2;
     word field_4;
     word field_6;
 };
 
-struct dialogAction_PlayAudio
-{
+struct dialogAction_PlayAudio {
     word audioId;
     word shouldPlay;
     word field_4;
     word field_6;
 };
 
-struct dialogAction_SetReturnValue
-{
+struct dialogAction_SetReturnValue {
     word value;
     word field_2;
     word field_4;
     word field_6;
 };
 
-union dialogActionData
-{
+union dialogActionData {
     struct dialogAction_SetTemporaryFlag setTemporaryFlag;
     struct dialogAction_SetTimer setTimer;
     struct dialogAction_LearnSpell learnSpell;
@@ -2097,34 +1984,30 @@ union dialogActionData
     struct dialogAction_ResizeDialog resizeDialog;
 };
 
-struct dialogAction
-{
-    word type
-    ?;
+struct dialogAction {
+    word type?;
     union dialogActionData action;
 };
 
-typedef enum dialogActionType
-{
-    unknownAction = 0,
-    SetTextVariable = 1,
-    GiveItem = 2,
-    RemoveItem = 3,
-    SetGlobalValue = 4,
-    ResizeDialog = 6,
-    ApplyCondition = 8,
-    ChangeAttribute = 9,
-    GetPartyAttribute = 10,
-    PlayAudio = 12,
-    AdvanceTime = 13,
-    PushDialogEntry = 16,
-    SetReturnValue = 21
+typedef enum dialogActionType {
+    unknownAction=0,
+    SetTextVariable=1,
+    GiveItem=2,
+    RemoveItem=3,
+    SetGlobalValue=4,
+    ResizeDialog=6,
+    ApplyCondition=8,
+    ChangeAttribute=9,
+    GetPartyAttribute=10,
+    PlayAudio=12,
+    AdvanceTime=13,
+    PushDialogEntry=16,
+    SetReturnValue=21
 } dialogActionType;
 
 typedef struct dialogBranchData dialogBranchData, *PdialogBranchData;
 
-struct dialogBranchData
-{
+struct dialogBranchData {
     word globalKey;
     word unknown3;
     word unknown4;
@@ -2133,8 +2016,7 @@ struct dialogBranchData
 
 typedef struct dialogEntry dialogEntry, *PdialogEntry;
 
-struct dialogEntry
-{
+struct dialogEntry {
     byte dialogType;
     word actorNr;
     word flag_field_3;
@@ -2145,8 +2027,7 @@ struct dialogEntry
 
 typedef struct dialogTypeData dialogTypeData, *PdialogTypeData;
 
-struct dialogTypeData
-{
+struct dialogTypeData {
     byte field_0;
     byte field_1;
     byte field_2;
@@ -2162,35 +2043,32 @@ struct dialogTypeData
     union dialogActionData actionData;
 };
 
-typedef enum DisplayCombination
-{
-    noDisplay = 0,
-    monochromeAdapterWithMonochromeDisplay = 1,
-    CGAWithColorDisplay = 2,
-    Reserved = 3,
-    EGAWithColorDisplay = 4,
-    EGAWithMonochromeDisplay = 5,
-    PGAWithColorDisplay = 6,
-    VGAWithMonochromeAnalogDisplay = 7,
-    VGAWithColorAnalogDisplay = 8,
-    Reserved2 = 9,
-    MCGAWithDigitalColorDisplay = 10,
-    MCGAWithMonochromeAnalogDisplay = 11,
-    MCGAWithColorAnalogDisplay = 12,
-    UnknownDisplay = 255
+typedef enum DisplayCombination {
+    noDisplay=0,
+    monochromeAdapterWithMonochromeDisplay=1,
+    CGAWithColorDisplay=2,
+    Reserved=3,
+    EGAWithColorDisplay=4,
+    EGAWithMonochromeDisplay=5,
+    PGAWithColorDisplay=6,
+    VGAWithMonochromeAnalogDisplay=7,
+    VGAWithColorAnalogDisplay=8,
+    Reserved2=9,
+    MCGAWithDigitalColorDisplay=10,
+    MCGAWithMonochromeAnalogDisplay=11,
+    MCGAWithColorAnalogDisplay=12,
+    UnknownDisplay=255
 } DisplayCombination;
 
 typedef struct enemyParty enemyParty, *PenemyParty;
 
-struct enemyParty
-{
+struct enemyParty {
     pointer112 pEnemyActor;
 };
 
 typedef struct enemyStruct6 enemyStruct6, *PenemyStruct6;
 
-struct enemyStruct6
-{
+struct enemyStruct6 {
     word field_0;
     word field_2;
     word field_4;
@@ -2198,8 +2076,7 @@ struct enemyStruct6
 
 typedef struct expiry_timer expiry_timer, *Pexpiry_timer;
 
-struct expiry_timer
-{
+struct expiry_timer {
     byte type;
     byte flag;
     word key;
@@ -2208,8 +2085,7 @@ struct expiry_timer
 
 typedef struct ffblk ffblk, *Pffblk;
 
-struct ffblk
-{
+struct ffblk {
     byte ff_reserved;
     undefined field1_0x1;
     undefined field2_0x2;
@@ -2254,47 +2130,42 @@ struct ffblk
 
 /* WARNING! conflicting data type names: /FILE - /stdio.h/FILE */
 
-typedef enum FileFlags
-{
-    _F_READ = 1,
-    _F_WRIT = 2,
-    _F_BUF = 4,
-    _F_LBUF = 8,
-    _F_ERR = 16,
-    _F_EOF = 32,
-    _F_BIN = 64,
-    _F_IN = 128,
-    _F_OUT = 256,
-    _F_TERM = 512
+typedef enum FileFlags {
+    _F_READ=1,
+    _F_WRIT=2,
+    _F_BUF=4,
+    _F_LBUF=8,
+    _F_ERR=16,
+    _F_EOF=32,
+    _F_BIN=64,
+    _F_IN=128,
+    _F_OUT=256,
+    _F_TERM=512
 } FileFlags;
 
-typedef enum flagBits
-{
+typedef enum flagBits {
 } flagBits;
 
-typedef enum gameDataOffset
-{
-    gameDataOffset_Actors = 2775,
-    gameDataOffset_GoldPerChapter = 4855,
-    gameDataOffset_Encounter7EnemyPointers = 4895
+typedef enum gameDataOffset {
+    gameDataOffset_Actors=2775,
+    gameDataOffset_GoldPerChapter=4855,
+    gameDataOffset_Encounter7EnemyPointers=4895
 } gameDataOffset;
 
-typedef enum gameObjectType
-{
-    gameObjectType_0 = 0,
-    gameObjectType_1 = 1,
-    gameObjectType_actor = 2,
-    gameObjectType_combatData = 3,
-    gameObjectType_container = 4,
-    gameObjectType_none = 4294967295
+typedef enum gameObjectType {
+    gameObjectType_0=0,
+    gameObjectType_1=1,
+    gameObjectType_actor=2,
+    gameObjectType_combatData=3,
+    gameObjectType_container=4,
+    gameObjectType_none=4294967295
 } gameObjectType;
 
 typedef struct gds gds, *Pgds;
 
 typedef struct gds_struct36 gds_struct36, *Pgds_struct36;
 
-struct gds_struct36
-{
+struct gds_struct36 {
     word xPos;
     word yPos;
     word width;
@@ -2309,14 +2180,11 @@ struct gds_struct36
     dword dialogId2;
     dword pDialogEntry;
     word globalKey;
-    word minGlobalValue
-    ?;
-    word maxGlobalValue
-    ?;
+    word minGlobalValue?;
+    word maxGlobalValue?;
 };
 
-struct gds
-{
+struct gds {
     ascii label;
     undefined field1_0x1;
     undefined field2_0x2;
@@ -2346,172 +2214,156 @@ struct gds
     struct gds_struct36 field_29;
 };
 
-typedef enum gridElementType
-{
+typedef enum gridElementType {
     grid_element_damaging?=1,
     grid_element_out_of_bounds?=2,
-    grid_element_trap_crystal = 3,
-    grid_element_unknown_4 = 4,
-    grid_element_trap_diamond = 5,
-    grid_element_exit = 6,
-    grid_element_unknown_7 = 7,
-    grid_element_unknown_8 = 8,
-    grid_element_unknown_9 = 9,
-    grid_element_cannon_west = 10,
-    grid_element_cannon_east = 11,
-    grid_element_cannon_north = 12,
-    grid_element_cannon_south = 13,
-    grid_element_actor_2 = 15,
-    grid_element_actor_1 = 16,
-    grid_element_actor_0 = 17
+    grid_element_trap_crystal=3,
+    grid_element_unknown_4=4,
+    grid_element_trap_diamond=5,
+    grid_element_exit=6,
+    grid_element_unknown_7=7,
+    grid_element_unknown_8=8,
+    grid_element_unknown_9=9,
+    grid_element_cannon_west=10,
+    grid_element_cannon_east=11,
+    grid_element_cannon_north=12,
+    grid_element_cannon_south=13,
+    grid_element_actor_2=15,
+    grid_element_actor_1=16,
+    grid_element_actor_0=17
 } gridElementType;
 
 typedef struct heapHeader heapHeader, *PheapHeader;
 
-struct heapHeader
-{
+struct heapHeader {
     word bsize;
     word prev_real;
     word prev_free;
     word next_free;
 };
 
-typedef enum interactable
-{
-    interactable_bush_food = 26,
-    interactable_bush_poison = 27,
-    interactable_bush_healing = 28
+typedef enum interactable {
+    interactable_bush_food=26,
+    interactable_bush_poison=27,
+    interactable_bush_healing=28
 } interactable;
 
-typedef enum itemFlags
-{
-    item_lit = 1,
-    itemFlag_unknown2 = 2,
-    itemFlag_unknown4 = 4,
-    item_broken = 16,
-    item_repairable = 32,
-    item_equipped = 64,
-    item_poisoned = 128,
-    item_flaming = 256,
-    item_steelfired = 512,
-    item_frosted = 1024,
-    item_enhanced1 = 2048,
-    item_enhanced2 = 4096,
-    item_blessed1 = 8192,
-    item_blessed2 = 16384,
-    item_blessed3 = 32768
+typedef enum itemFlags {
+    item_lit=1,
+    itemFlag_unknown2=2,
+    itemFlag_unknown4=4,
+    item_broken=16,
+    item_repairable=32,
+    item_equipped=64,
+    item_poisoned=128,
+    item_flaming=256,
+    item_steelfired=512,
+    item_frosted=1024,
+    item_enhanced1=2048,
+    item_enhanced2=4096,
+    item_blessed1=8192,
+    item_blessed2=16384,
+    item_blessed3=32768
 } itemFlags;
 
-typedef enum itemShopCategories
-{
-    Miscellaneous = 1,
-    Rations_ = 2,
-    Jewelry = 4,
-    Keys = 8,
-    NotForSale = 32,
-    CombatItems = 64,
-    Swords = 128,
-    RangedWeapons = 256,
-    Armors = 512,
-    MagicItems = 1024,
-    Staves = 2048,
-    Spells = 4096,
-    Books = 8192,
-    Potions = 16384,
-    Modifiers = 32768
+typedef enum itemShopCategories {
+    Miscellaneous=1,
+    Rations_=2,
+    Jewelry=4,
+    Keys=8,
+    NotForSale=32,
+    CombatItems=64,
+    Swords=128,
+    RangedWeapons=256,
+    Armors=512,
+    MagicItems=1024,
+    Staves=2048,
+    Spells=4096,
+    Books=8192,
+    Potions=16384,
+    Modifiers=32768
 } itemShopCategories;
 
-typedef enum keyboard
-{
-    keyboard_escape = 1,
-    keyboard_backspace = 14,
-    keyboard_tab = 15,
-    keyboard_P = 25,
-    keyboard_enter = 28,
-    keyboard_left_control = 29,
-    keyboard_backtick = 41,
-    keyboard_left_shift = 42,
-    keyboard_N = 49,
-    keyboard_right_shift = 54,
-    keyboard_left_alt = 56,
-    keyboard_space = 57,
-    keyboard_numlock = 69,
-    keyboard_scrollock = 70,
-    keyboard_numpad_7 = 71,
-    keyboard_numpad_8 = 72,
-    keyboard_numpad_4 = 75,
-    keyboard_numpad_5 = 76,
-    keyboard_numpad_6 = 77,
-    keyboard_numpad_plus = 78,
-    keyboard_numpad_1 = 79,
-    keyboard_numpad_2 = 80,
-    keyboard_numpad_0 = 82,
-    keyboard_numpad_dot = 83
+typedef enum keyboard {
+    keyboard_escape=1,
+    keyboard_backspace=14,
+    keyboard_tab=15,
+    keyboard_P=25,
+    keyboard_enter=28,
+    keyboard_left_control=29,
+    keyboard_backtick=41,
+    keyboard_left_shift=42,
+    keyboard_N=49,
+    keyboard_right_shift=54,
+    keyboard_left_alt=56,
+    keyboard_space=57,
+    keyboard_numlock=69,
+    keyboard_scrollock=70,
+    keyboard_numpad_7=71,
+    keyboard_numpad_8=72,
+    keyboard_numpad_4=75,
+    keyboard_numpad_5=76,
+    keyboard_numpad_6=77,
+    keyboard_numpad_plus=78,
+    keyboard_numpad_1=79,
+    keyboard_numpad_2=80,
+    keyboard_numpad_0=82,
+    keyboard_numpad_dot=83
 } keyboard;
 
 typedef struct keyword keyword, *Pkeyword;
 
-struct keyword
-{
+struct keyword {
     word number;
     pointer pString;
 };
 
 typedef struct labelData labelData, *PlabelData;
 
-struct labelData
-{
+struct labelData {
     word pString;
     word xPosition;
     word yPosition;
     word attributes;
-    byte color
-    ?;
-    byte shadowColor
-    ?;
+    byte color?;
+    byte shadowColor?;
 };
 
-typedef enum lockFlags
-{
-    lock_trapped = 4
+typedef enum lockFlags {
+    lock_trapped=4
 } lockFlags;
 
-typedef enum MACRO_FA
-{
-    FA_NORMAL = 0,
-    FA_RDONLY = 1,
-    FA_HIDDEN = 2,
-    FA_SYSTEM = 4,
-    FA_LABEL = 8,
-    FA_DIREC = 16,
-    FA_ARCH = 32
+typedef enum MACRO_FA {
+    FA_NORMAL=0,
+    FA_RDONLY=1,
+    FA_HIDDEN=2,
+    FA_SYSTEM=4,
+    FA_LABEL=8,
+    FA_DIREC=16,
+    FA_ARCH=32
 } MACRO_FA;
 
-typedef enum MagicConstants
-{
-    BmxFileSignature = 4198,
-    ScxFileSignature = 10166
+typedef enum MagicConstants {
+    BmxFileSignature=4198,
+    ScxFileSignature=10166
 } MagicConstants;
 
-typedef enum mainCharacter
-{
-    Character_Locklear = 0,
-    Character_Gorath = 1,
-    Character_Owyn = 2,
-    Character_Pug = 3,
-    Character_James = 4,
-    Character_Patrus = 5
+typedef enum mainCharacter {
+    Character_Locklear=0,
+    Character_Gorath=1,
+    Character_Owyn=2,
+    Character_Pug=3,
+    Character_James=4,
+    Character_Patrus=5
 } mainCharacter;
 
-typedef enum memoryLocations
-{
-    pStream1STDOUT = 14306
+typedef enum memoryLocations {
+    pStream1STDOUT=14306
 } memoryLocations;
 
 typedef struct menuData menuData, *PmenuData;
 
-struct menuData
-{
+struct menuData {
     word field_0;
     word IsModal;
     word field_4;
@@ -2527,32 +2379,26 @@ struct menuData
     dword pBitmapData;
 };
 
-typedef enum mouseButton
-{
-    mouseButton_left = 0,
-    mouseButton_right = 1
+typedef enum mouseButton {
+    mouseButton_left=0,
+    mouseButton_right=1
 } mouseButton;
 
 typedef struct mousePointer mousePointer, *PmousePointer;
 
-struct mousePointer
-{
+struct mousePointer {
     word x;
     word y;
-    word xOffset
-    ?;
-    word yOffset
-    ?;
+    word xOffset?;
+    word yOffset?;
     word CursorImageWidth;
     word CursorImageHeight;
-    word imageNumber
-    ?;
+    word imageNumber?;
 };
 
 typedef struct negativeStatusEffect negativeStatusEffect, *PnegativeStatusEffect;
 
-struct negativeStatusEffect
-{
+struct negativeStatusEffect {
     ascii Name;
     undefined field1_0x1;
     undefined field2_0x2;
@@ -2572,27 +2418,25 @@ struct negativeStatusEffect
     word effectOnAttributes2;
 };
 
-typedef enum objectFlags
-{
-    objectFlags_1h = 1,
-    NotEquipable = 2,
-    objectFlags_8h = 8,
-    objectFlags_10h = 16,
-    objectFlags_20h = 32,
-    OnlyUsableInCombat = 64,
-    Magical = 128,
-    NotUsableInCombat = 256,
-    ArchersOnly = 512,
-    Stackable = 2048,
-    Degradable = 4096,
-    LimitedUses = 8192,
-    objectFlags_8000h = 32768
+typedef enum objectFlags {
+    objectFlags_1h=1,
+    NotEquipable=2,
+    objectFlags_8h=8,
+    objectFlags_10h=16,
+    objectFlags_20h=32,
+    OnlyUsableInCombat=64,
+    Magical=128,
+    NotUsableInCombat=256,
+    ArchersOnly=512,
+    Stackable=2048,
+    Degradable=4096,
+    LimitedUses=8192,
+    objectFlags_8000h=32768
 } objectFlags;
 
 typedef struct objectInfo objectInfo, *PobjectInfo;
 
-struct objectInfo
-{
+struct objectInfo {
     ascii name;
     undefined field1_0x1;
     undefined field2_0x2;
@@ -2628,10 +2472,8 @@ struct objectInfo
     word wordWrap;
     word chapterNumber;
     word basePrice;
-    word swingBase
-    ?;
-    word thrustBase
-    ?;
+    word swingBase?;
+    word thrustBase?;
     word swingAccuracy_armorMod;
     word thrustAccuracy;
     word icon;
@@ -2642,12 +2484,10 @@ struct objectInfo
     word racialMod;
     word shopCategories;
     word objectType;
-    word attributesMask
-    ?;
+    word attributesMask?;
     word effectStrength;
     word field_42;
-    word durationInHours
-    ?;
+    word durationInHours?;
     word affectedAttributes;
     word affectedAmount;
     word chanceToDegrade;
@@ -2655,95 +2495,92 @@ struct objectInfo
     word minimumQuality;
 };
 
-typedef enum objectNames
-{
-    Crystal_Staff = 1,
-    Lightning_Staff = 2,
-    Staff_of_Macros = 4,
-    Amulet_of_the_Upright_Man = 5,
-    Ring_of_Prandur = 6,
-    Brass_Spyglass = 7,
-    Cup_of_Rlnn_Skr = 8,
-    Eliaems_Heart = 9,
-    Glory_Hand = 10,
-    Horn_of_Algon_Kokoon = 11,
-    Idol_of_Lassur = 12,
-    Infinity_Pool = 13,
-    Raw_Manna = 14,
-    Rorics_Seal = 15,
-    Shell = 16,
-    Wyverns_Egg = 17,
-    Guarda_Revanche = 22,
-    Exotic_sword = 23,
-    Bessy_Mauler = 32,
-    Tsurani_Heavy_Crossbow = 34,
-    Quarrels = 36,
-    Elven_Quarrels = 37,
-    Tsurani_Quarrels = 38,
-    Poisoned_Quarrels = 39,
-    Poisoned_Elven_Quarrels = 40,
-    Poisoned_Tsurani_Quarrels = 41,
-    Flaming_Quarrels = 42,
-    Enchanted_Quarrels = 43,
-    Standard_Kingdom_Armor = 48,
-    Gold_Sovereigns = 53,
-    Silver_Royals = 54,
-    Bag_of_Grain = 60,
-    Rations = 72,
-    Rations_Poisoned = 73,
-    Rations_Spoiled = 74,
-    Light_Bowstring = 77,
-    Picklocks = 80,
-    Practice_Lute = 81,
-    Rope = 82,
-    Shovel = 83,
-    Torch = 84,
-    Ring_of_the_Golden_Way = 88,
-    Vapor_Mask = 89,
-    Weedwalkers = 90,
-    Waani = 101,
-    Wooden_Chest = 102,
-    Coltari_Poison = 105,
-    Silverthorn_Anti_Venom = 113,
-    Restoratives = 119,
-    Note_ = 120,
-    Abbots_Journal = 124,
-    Magical_Scroll = 133,
-    Days_Rations = 134,
-    Quegian_Brandy = 135,
-    Keshian_Ale = 137
+typedef enum objectNames {
+    Crystal_Staff=1,
+    Lightning_Staff=2,
+    Staff_of_Macros=4,
+    Amulet_of_the_Upright_Man=5,
+    Ring_of_Prandur=6,
+    Brass_Spyglass=7,
+    Cup_of_Rlnn_Skr=8,
+    Eliaems_Heart=9,
+    Glory_Hand=10,
+    Horn_of_Algon_Kokoon=11,
+    Idol_of_Lassur=12,
+    Infinity_Pool=13,
+    Raw_Manna=14,
+    Rorics_Seal=15,
+    Shell=16,
+    Wyverns_Egg=17,
+    Guarda_Revanche=22,
+    Exotic_sword=23,
+    Bessy_Mauler=32,
+    Tsurani_Heavy_Crossbow=34,
+    Quarrels=36,
+    Elven_Quarrels=37,
+    Tsurani_Quarrels=38,
+    Poisoned_Quarrels=39,
+    Poisoned_Elven_Quarrels=40,
+    Poisoned_Tsurani_Quarrels=41,
+    Flaming_Quarrels=42,
+    Enchanted_Quarrels=43,
+    Standard_Kingdom_Armor=48,
+    Gold_Sovereigns=53,
+    Silver_Royals=54,
+    Bag_of_Grain=60,
+    Rations=72,
+    Rations_Poisoned=73,
+    Rations_Spoiled=74,
+    Light_Bowstring=77,
+    Picklocks=80,
+    Practice_Lute=81,
+    Rope=82,
+    Shovel=83,
+    Torch=84,
+    Ring_of_the_Golden_Way=88,
+    Vapor_Mask=89,
+    Weedwalkers=90,
+    Waani=101,
+    Wooden_Chest=102,
+    Coltari_Poison=105,
+    Silverthorn_Anti_Venom=113,
+    Restoratives=119,
+    Note_=120,
+    Abbots_Journal=124,
+    Magical_Scroll=133,
+    Days_Rations=134,
+    Quegian_Brandy=135,
+    Keshian_Ale=137
 } objectNames;
 
-typedef enum objectTypes
-{
-    Misc = 0,
-    Sword = 1,
-    Crossbow = 2,
-    Staff = 3,
-    Armor = 4,
-    Key = 7,
-    Repair = 8,
-    Poison = 9,
-    Enhancer = 10,
-    ClericalEnhancer = 11,
-    BowString = 12,
-    MagicalScroll = 13,
-    Note = 16,
-    Book = 17,
-    Potion = 18,
-    Restorative = 19,
-    MassRestorative = 20,
-    LightSource = 21,
-    CombatItem = 22,
-    Food = 23,
-    Drink = 24,
-    Usable = 25
+typedef enum objectTypes {
+    Misc=0,
+    Sword=1,
+    Crossbow=2,
+    Staff=3,
+    Armor=4,
+    Key=7,
+    Repair=8,
+    Poison=9,
+    Enhancer=10,
+    ClericalEnhancer=11,
+    BowString=12,
+    MagicalScroll=13,
+    Note=16,
+    Book=17,
+    Potion=18,
+    Restorative=19,
+    MassRestorative=20,
+    LightSource=21,
+    CombatItem=22,
+    Food=23,
+    Drink=24,
+    Usable=25
 } objectTypes;
 
 typedef struct overlayStub overlayStub, *PoverlayStub;
 
-struct overlayStub
-{
+struct overlayStub {
     byte trap; /* Overlay manager interrupt */
     undefined field1_0x1;
     word memorySwap; /* Runtime memory swap address */
@@ -2751,28 +2588,21 @@ struct overlayStub
     word codesize; /* Code size */
     word relsize; /* Relocation area size */
     word nentries; /* Number of overlay entries */
-    word probation
-    ?; /* Previous stub */
+    word probation?; /* Previous stub */
     word heapPointer; /* heap pointer */
-    word codeList
-    ?; /* Next stub */
-    word heapOrg
-    ?;
+    word codeList?; /* Next stub */
+    word heapOrg?;
     word heapEnd;
     word __ReadOvrDisk;
     byte flag_field_1A;
-    byte loadList
-    ?;
-    word nextStubSegemnt2
-    ?;
-    word nextStubSegment
-    ?;
+    byte loadList?;
+    word nextStubSegemnt2?;
+    word nextStubSegment?;
 };
 
 typedef struct palette palette, *Ppalette;
 
-struct palette
-{
+struct palette {
     struct color colors;
     undefined field1_0x3;
     undefined field2_0x4;
@@ -3543,38 +3373,32 @@ struct palette
 
 typedef struct position3d position3d, *Pposition3d;
 
-struct position3d
-{
+struct position3d {
     dword x;
     dword y;
     dword z;
 };
 
-typedef enum race
-{
-    None = 0,
-    Tsurani = 1,
-    Elf = 2,
-    Human = 3,
-    Dwarf = 4
+typedef enum race {
+    None=0,
+    Tsurani=1,
+    Elf=2,
+    Human=3,
+    Dwarf=4
 } race;
 
-typedef enum resolution
-{
-    _320x150 = 9830720,
-    _320x200 = 13107520,
-    _640x350 = 22938240
+typedef enum resolution {
+    _320x150=9830720,
+    _320x200=13107520,
+    _640x350=22938240
 } resolution;
 
 typedef struct resourceFileHandler resourceFileHandler, *PresourceFileHandler;
 
-struct resourceFileHandler
-{
+struct resourceFileHandler {
     word size;
-    word readBuffer
-    ?;
-    word writeBuffer
-    ?;
+    word readBuffer?;
+    word writeBuffer?;
     pointer ReadMethod;
     pointer WriteMethod;
     pointer Method3;
@@ -3583,38 +3407,30 @@ struct resourceFileHandler
 
 typedef struct resourceFileHandlerData resourceFileHandlerData, *PresourceFileHandlerData;
 
-struct resourceFileHandlerData
-{
-    word pBuffer128bytes
-    ?;
+struct resourceFileHandlerData {
+    word pBuffer128bytes?;
     dword buffer;
     dword pStream;
-    dword amountProcessed
-    ?;
-    dword sizeInBytes
-    ?;
-    dword decompressedSize
-    ?;
+    dword amountProcessed?;
+    dword sizeInBytes?;
+    dword decompressedSize?;
     dword field_16;
     byte field_1A;
     byte field_1B;
     dword offsetInStream;
-    byte compressionTypeAndFlags
-    ?;
+    byte compressionTypeAndFlags?;
 };
 
 typedef struct rmfDictEntry rmfDictEntry, *PrmfDictEntry;
 
-struct rmfDictEntry
-{
+struct rmfDictEntry {
     dword hashKey;
     dword fileOffset;
 };
 
 typedef struct RmfEntry RmfEntry, *PRmfEntry;
 
-struct RmfEntry
-{
+struct RmfEntry {
     byte fileName;
     undefined field1_0x1;
     undefined field2_0x2;
@@ -3639,8 +3455,7 @@ struct RmfEntry
 
 typedef struct rotation3d rotation3d, *Protation3d;
 
-struct rotation3d
-{
+struct rotation3d {
     word x;
     word y;
     word z;
@@ -3648,8 +3463,7 @@ struct rotation3d
 
 typedef struct SE SE, *PSE;
 
-struct SE
-{
+struct SE {
     byte calltype;
     byte priority;
     word addrlow;
@@ -3658,8 +3472,7 @@ struct SE
 
 typedef struct SegDef SegDef, *PSegDef;
 
-struct SegDef
-{
+struct SegDef {
     word segment;
     word size;
     word field_4;
@@ -3668,8 +3481,7 @@ struct SegDef
 
 typedef struct shpDat shpDat, *PshpDat;
 
-struct shpDat
-{
+struct shpDat {
     word creatureNumbers;
     undefined field1_0x2;
     undefined field2_0x3;
@@ -3679,15 +3491,13 @@ struct shpDat
     undefined field6_0x7;
 };
 
-typedef enum soundEffects
-{
-    sound_crossbow_broken = 67
+typedef enum soundEffects {
+    sound_crossbow_broken=67
 } soundEffects;
 
 typedef struct spellData spellData, *PspellData;
 
-struct spellData
-{
+struct spellData {
     word pSpellName;
     word minimumCost;
     word maximumCost;
@@ -3701,82 +3511,78 @@ struct spellData
     word duration;
 };
 
-typedef enum spellNames
-{
-    Dragons_Breath = 0,
-    Dannons_Delusions = 1,
-    Candle_Glow = 2,
-    Despair_Thy_Eyes = 3,
-    Flamecast = 4,
-    Skyfire = 5,
-    Hochos_Haven = 6,
-    Gift_of_Sung = 7,
-    Scent_of_Sarig = 8,
-    Bane_of_Black_Slayers = 9,
-    Eagle_Wing = 10,
-    Eyes_of_Ishap = 11,
-    Nightfingers = 12,
-    Grief_of_1000_Nights = 13,
-    Mirrorwall = 14,
-    Touch_of_LimsKragma = 15,
-    River_Song = 16,
-    The_Unseen = 17,
-    Nacre_Cicatrix = 18,
-    Wrath_of_Killian = 19,
-    Unfortunate_Flux = 20,
-    Mad_Gods_Rage = 21,
-    Mind_Melt = 22,
-    Skin_of_the_Dragon = 23,
-    Aether_Bridge = 24,
-    Steelfire = 25,
-    Stardusk = 26,
-    Winds_of_Eortis = 27,
-    Firestorm = 28,
-    Gambit_of_the_Eight = 29,
-    Invitation = 30,
-    Thoughts_Like_Clouds = 31,
-    Final_Rest = 32,
-    Dawn_of_Truth = 33,
-    Union = 34,
-    And_the_Light_Shall_Lie = 35,
-    The_Fetters_of_Rime = 36,
-    Black_Nimbus = 37,
-    Arachnos = 38,
-    Graves_Disquiet = 39,
-    Asphyxiation = 40,
-    Thy_Masters_Will = 41,
-    Strength_Drain = 42,
-    Summon_Riftmare = 43,
-    Evil_Seek = 44
+typedef enum spellNames {
+    Dragons_Breath=0,
+    Dannons_Delusions=1,
+    Candle_Glow=2,
+    Despair_Thy_Eyes=3,
+    Flamecast=4,
+    Skyfire=5,
+    Hochos_Haven=6,
+    Gift_of_Sung=7,
+    Scent_of_Sarig=8,
+    Bane_of_Black_Slayers=9,
+    Eagle_Wing=10,
+    Eyes_of_Ishap=11,
+    Nightfingers=12,
+    Grief_of_1000_Nights=13,
+    Mirrorwall=14,
+    Touch_of_LimsKragma=15,
+    River_Song=16,
+    The_Unseen=17,
+    Nacre_Cicatrix=18,
+    Wrath_of_Killian=19,
+    Unfortunate_Flux=20,
+    Mad_Gods_Rage=21,
+    Mind_Melt=22,
+    Skin_of_the_Dragon=23,
+    Aether_Bridge=24,
+    Steelfire=25,
+    Stardusk=26,
+    Winds_of_Eortis=27,
+    Firestorm=28,
+    Gambit_of_the_Eight=29,
+    Invitation=30,
+    Thoughts_Like_Clouds=31,
+    Final_Rest=32,
+    Dawn_of_Truth=33,
+    Union=34,
+    And_the_Light_Shall_Lie=35,
+    The_Fetters_of_Rime=36,
+    Black_Nimbus=37,
+    Arachnos=38,
+    Graves_Disquiet=39,
+    Asphyxiation=40,
+    Thy_Masters_Will=41,
+    Strength_Drain=42,
+    Summon_Riftmare=43,
+    Evil_Seek=44
 } spellNames;
 
 typedef struct spellSymbol spellSymbol, *PspellSymbol;
 
-struct spellSymbol
-{
+struct spellSymbol {
     word spellNumber;
     word xPosition;
     word yPosition;
     byte character;
 };
 
-typedef enum Stat
-{
-    S_IEXEC = 64,
-    S_IWRITE = 128,
-    S_IREAD = 256,
-    S_IFIFO = 4096,
-    S_IFCHR = 8192,
-    S_IFBLK = 12288,
-    S_IFDIR = 16384,
-    S_IFREG = 32768,
-    S_IFMT = 61440
+typedef enum Stat {
+    S_IEXEC=64,
+    S_IWRITE=128,
+    S_IREAD=256,
+    S_IFIFO=4096,
+    S_IFCHR=8192,
+    S_IFBLK=12288,
+    S_IFDIR=16384,
+    S_IFREG=32768,
+    S_IFMT=61440
 } Stat;
 
 typedef struct streamInfo streamInfo, *PstreamInfo;
 
-struct streamInfo
-{
+struct streamInfo {
     word stream;
     byte tagString;
     undefined field2_0x3;
@@ -3828,18 +3634,15 @@ struct streamInfo
     byte field_34;
     byte field_35;
     byte field_36;
-    word tagLength
-    ?;
+    word tagLength?;
     word field_39;
     dword currentOffset;
-    dword compressedSize
-    ?;
+    dword compressedSize?;
 };
 
 typedef struct struc_stream struc_stream, *Pstruc_stream;
 
-struct struc_stream
-{
+struct struc_stream {
     word resourceFileNr;
     dword resourceFileOffset;
     dword fileSize;
@@ -3848,16 +3651,14 @@ struct struc_stream
     word fp;
 };
 
-typedef enum swingOrThrust
-{
-    swingAttack = 0,
-    thrustAttack = 1
+typedef enum swingOrThrust {
+    swingAttack=0,
+    thrustAttack=1
 } swingOrThrust;
 
 typedef struct teleportation teleportation, *Pteleportation;
 
-struct teleportation
-{
+struct teleportation {
     struct location location;
     word gds_number;
     word gds_letter;
@@ -3865,8 +3666,7 @@ struct teleportation
 
 typedef struct textSlot textSlot, *PtextSlot;
 
-struct textSlot
-{
+struct textSlot {
     ascii string;
     undefined field1_0x1;
     undefined field2_0x2;
@@ -3903,8 +3703,7 @@ struct textSlot
 
 typedef struct tile tile, *Ptile;
 
-struct tile
-{
+struct tile {
     dword field_0;
     word field_4;
     word field_6;
@@ -3912,96 +3711,84 @@ struct tile
     word field_A;
 };
 
-typedef enum timerFlags
-{
-    timerFlags_1 = 1,
-    timerFlags_2 = 2,
-    timerFlags_4 = 4,
-    timerFlags_8 = 8,
-    timerFlags_10 = 16,
-    timerFlags_20 = 32,
-    timerFlags_40 = 64,
-    timerFlags_Reset = 128
+typedef enum timerFlags {
+    timerFlags_1=1,
+    timerFlags_2=2,
+    timerFlags_4=4,
+    timerFlags_8=8,
+    timerFlags_10=16,
+    timerFlags_20=32,
+    timerFlags_40=64,
+    timerFlags_Reset=128
 } timerFlags;
 
-typedef enum timerKeyLight
-{
-    timerKeyLight_Torch = 0,
-    timerKeyLight_DragonsBreath = 1,
-    timerKeyLight_CandleGlow = 2,
-    timerKeyLight_Stardusk = 3
+typedef enum timerKeyLight {
+    timerKeyLight_Torch=0,
+    timerKeyLight_DragonsBreath=1,
+    timerKeyLight_CandleGlow=2,
+    timerKeyLight_Stardusk=3
 } timerKeyLight;
 
-typedef enum timerKeySpell
-{
-    timerKeySpell_DragonsBreath = 0,
-    timerKeySpell_CandleGlow = 1,
-    timerKeySpell_Stardusk = 2,
-    timerKeySpell_AndTheLightShallLie = 3,
-    timerKeySpell_Union = 4,
-    timerKeySpell_ScentOfSarig = 5
+typedef enum timerKeySpell {
+    timerKeySpell_DragonsBreath=0,
+    timerKeySpell_CandleGlow=1,
+    timerKeySpell_Stardusk=2,
+    timerKeySpell_AndTheLightShallLie=3,
+    timerKeySpell_Union=4,
+    timerKeySpell_ScentOfSarig=5
 } timerKeySpell;
 
-typedef enum timerType
-{
-    timerType_Light = 1,
-    timerType_Spell = 2,
-    timerType_SetFlag = 3,
-    timerType_ClearFlag = 4
+typedef enum timerType {
+    timerType_Light=1,
+    timerType_Spell=2,
+    timerType_SetFlag=3,
+    timerType_ClearFlag=4
 } timerType;
 
-typedef enum times
-{
-    time_1_minute = 30,
-    time_1_hour = 1800,
-    time_6_hours = 10800,
-    time_12_hours = 21600,
-    time_1_day = 43200
+typedef enum times {
+    time_1_minute=30,
+    time_1_hour=1800,
+    time_6_hours=10800,
+    time_12_hours=21600,
+    time_1_day=43200
 } times;
 
 typedef struct trap_element trap_element, *Ptrap_element;
 
-struct trap_element
-{
+struct trap_element {
     word field_0;
     word type;
     byte grid_x;
     byte grid_y;
 };
 
-typedef enum trapElementType
-{
-    trap_element_red_crystal = 7,
-    trap_element_green_crystal = 8,
-    trap_element_solid_diamond = 9,
-    trap_element_passthrough_diamond = 10,
-    trap_element_cannon = 11,
-    trap_element_40 = 40
+typedef enum trapElementType {
+    trap_element_red_crystal=7,
+    trap_element_green_crystal=8,
+    trap_element_solid_diamond=9,
+    trap_element_passthrough_diamond=10,
+    trap_element_cannon=11,
+    trap_element_40=40
 } trapElementType;
 
 typedef struct uiElement uiElement, *PuiElement;
 
-typedef enum uiElementType
-{
-    uiElementType_ClickArea = 0,
-    uiElementType_InputField = 1,
-    uiElementType_FilePicker = 2,
-    uiElementType_ImageButton = 3,
-    uiElementType_Toggle = 4,
-    uiElementType_TextLink = 5,
-    uiElementType_TextButton = 6,
-    uiElementType_7 = 7,
-    uiElementType_8 = 8
+typedef enum uiElementType {
+    uiElementType_ClickArea=0,
+    uiElementType_InputField=1,
+    uiElementType_FilePicker=2,
+    uiElementType_ImageButton=3,
+    uiElementType_Toggle=4,
+    uiElementType_TextLink=5,
+    uiElementType_TextButton=6,
+    uiElementType_7=7,
+    uiElementType_8=8
 } uiElementType;
 
-struct uiElement
-{
-    enum uiElementType type
-    ?;
-    word action
-    ?;
-    bool boolVisible
-    ?;
+struct uiElement {
+    enum uiElementType type?;
+    word action?;
+    bool boolVisible?;
     word field_5;
     word field_7;
     word field_9;
@@ -4012,22 +3799,18 @@ struct uiElement
     word field_13;
     word label;
     word field_17;
-    word icon
-    ?;
-    word cursor
-    ?;
+    word icon?;
+    word cursor?;
     word field_1D_flag;
     word sound;
 };
 
 typedef struct unknown_ui_struct_26 unknown_ui_struct_26, *Punknown_ui_struct_26;
 
-struct unknown_ui_struct_26
-{
+struct unknown_ui_struct_26 {
     word xOffset;
     word yOffset;
-    word width
-    ?;
+    word width?;
     word height;
     word field_8;
     word parentX;
@@ -4042,22 +3825,17 @@ struct unknown_ui_struct_26
 
 typedef struct unknown_ui_struct_33 unknown_ui_struct_33, *Punknown_ui_struct_33;
 
-struct unknown_ui_struct_33
-{
+struct unknown_ui_struct_33 {
     pointer pSomethings;
     word pLabelString;
     word num_something;
     word field_6;
     word field_8;
     word field_A;
-    word x
-    ?;
-    word y
-    ?;
-    word width
-    ?;
-    word height
-    ?;
+    word x?;
+    word y?;
+    word width?;
+    word height?;
     word field_14;
     word field_16;
     byte field_18;
@@ -4065,25 +3843,21 @@ struct unknown_ui_struct_33
     byte field_1A;
     byte field_1B;
     byte field_1C;
-    dword pBitmapData
-    ?;
+    dword pBitmapData?;
 };
 
 typedef struct unknown_ui_struct_8 unknown_ui_struct_8, *Punknown_ui_struct_8;
 
-struct unknown_ui_struct_8
-{
+struct unknown_ui_struct_8 {
     word pEntries;
     word num_entries;
-    word current_entry
-    ?;
+    word current_entry?;
     word field_6;
 };
 
 typedef struct unknown_ui_struct_xx unknown_ui_struct_xx, *Punknown_ui_struct_xx;
 
-struct unknown_ui_struct_xx
-{
+struct unknown_ui_struct_xx {
     byte field_0;
     undefined field1_0x1;
     word field_2;
@@ -4095,8 +3869,7 @@ struct unknown_ui_struct_xx
 
 typedef struct unknownStruct12 unknownStruct12, *PunknownStruct12;
 
-struct unknownStruct12
-{
+struct unknownStruct12 {
     dword xPosition;
     dword yPosition;
     word zRotation;
@@ -4105,8 +3878,7 @@ struct unknownStruct12
 
 typedef struct unknownStruct13 unknownStruct13, *PunknownStruct13;
 
-struct unknownStruct13
-{
+struct unknownStruct13 {
     byte field_0;
     byte field_1;
     byte field_2;
@@ -4122,24 +3894,19 @@ struct unknownStruct13
 
 typedef struct unknownStruct14 unknownStruct14, *PunknownStruct14;
 
-struct unknownStruct14
-{
+struct unknownStruct14 {
     word field_0;
     word field_2;
     word field_4;
-    dword startTime
-    ?;
-    dword expiryTime
-    ?;
+    dword startTime?;
+    dword expiryTime?;
 };
 
 typedef struct unknownStruct16 unknownStruct16, *PunknownStruct16;
 
-struct unknownStruct16
-{
+struct unknownStruct16 {
     pointer32 pWorldItem;
-    dword GlobalKey
-    ?;
+    dword GlobalKey?;
     word x;
     word y;
     word width;
@@ -4148,11 +3915,9 @@ struct unknownStruct16
 
 typedef struct unknownStruct22 unknownStruct22, *PunknownStruct22;
 
-struct unknownStruct22
-{
+struct unknownStruct22 {
     word field_0;
-    pointer worldItem
-    ?;
+    pointer worldItem?;
     word field_4;
     word field_6;
     word field_8;
@@ -4165,18 +3930,14 @@ typedef struct unknownStruct36 unknownStruct36, *PunknownStruct36;
 
 typedef struct worldItem worldItem, *PworldItem;
 
-struct worldItem
-{
+struct worldItem {
     word id;
     struct position3d position3d;
     struct rotation3d rotation3d;
-    word p350bytes
-    ?
-    ?;
+    word p350bytes??;
 };
 
-struct unknownStruct36
-{
+struct unknownStruct36 {
     struct worldItem worldItem;
     word field_16;
     word field_18;
@@ -4189,8 +3950,7 @@ struct unknownStruct36
 
 typedef struct unknownStruct48 unknownStruct48, *PunknownStruct48;
 
-struct unknownStruct48
-{
+struct unknownStruct48 {
     word creatureNumber;
     undefined field1_0x2;
     undefined field2_0x3;
@@ -4227,18 +3987,16 @@ struct unknownStruct48
     byte field_2F;
 };
 
-typedef enum WhichValue
-{
-    Effective = 0,
-    Maximum = 1,
-    CurrentBase = 3,
-    Unknown = 4
+typedef enum WhichValue {
+    Effective=0,
+    Maximum=1,
+    CurrentBase=3,
+    Unknown=4
 } WhichValue;
 
 typedef struct worldItemFileEntry worldItemFileEntry, *PworldItemFileEntry;
 
-struct worldItemFileEntry
-{
+struct worldItemFileEntry {
     word id;
     struct rotation3d rotation;
     struct position3d position;
@@ -4246,21 +4004,18 @@ struct worldItemFileEntry
 
 typedef struct worldTile worldTile, *PworldTile;
 
-struct worldTile
-{
+struct worldTile {
     byte zoneNumber;
     byte xCoordinate;
     byte yCoordinate;
-    byte currentTileNr
-    ?;
+    byte currentTileNr?;
     word nrOfItems;
     dword p300worldItems;
 };
 
 typedef struct zoneDataFromSaveGame zoneDataFromSaveGame, *PzoneDataFromSaveGame;
 
-struct zoneDataFromSaveGame
-{
+struct zoneDataFromSaveGame {
     word zoneNumber;
     dword field_2;
     dword tempGam_fileOffset;
@@ -4269,9 +4024,9 @@ struct zoneDataFromSaveGame
     dword field_12;
 };
 
-typedef enum zoneType
-{
-    zoneType_above_ground = 0,
-    zoneType_unknown = 1,
-    zoneType_underground = 2
+typedef enum zoneType {
+    zoneType_above_ground=0,
+    zoneType_unknown=1,
+    zoneType_underground=2
 } zoneType;
+
