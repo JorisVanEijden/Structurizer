@@ -7,6 +7,9 @@ public class Variable(string name, string type, int size, int count = 1) {
     public string Type { get; set; } = type;
     public int Size { get; set; } = size;
     public int Count { get; set; } = count;
+    public bool IsPointer { get; set; }
+    public bool IsNear { get; set; }
+
     
     [JsonIgnore]
     public int Length {

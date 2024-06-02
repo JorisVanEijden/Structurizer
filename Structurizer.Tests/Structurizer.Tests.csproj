@@ -28,10 +28,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="Fixtures\ida.h">
+        <None Update="Fixtures\ida.h.sample">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Fixtures\ghidra.h">
+        <None Update="Fixtures\ghidra.h.sample">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>

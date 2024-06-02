@@ -28,7 +28,10 @@ public class Parser(Configuration config) {
         ["long"] = new Variable("long", "long", SizeOf32Bits),
         ["_BYTE"] = new Variable("unsigned char", "unsigned char", SizeOf8Bits),
         ["size_t"] = new Variable("size_t", "size_t", config.DefaultSizeT),
-        ["pointer"] = new Variable("pointer", "pointer", config.DefaultPointerSize)
+        ["pointer"] = new Variable("pointer", "pointer", SizeOf16Bits) {
+            IsPointer = true,
+            IsNear = true
+        }
     };
     
     public ParseResult ParseFile(string headerFilePath) {
@@ -142,87 +145,86 @@ public class Parser(Configuration config) {
     }
     
     private int ProcessMember(string member, StructType structType, int maxSize) {
-        string[]? memberParts = member.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        
-        if (Regex.Match(memberParts[0], @"__attribute__\(\(aligned\((\d+)\)\)") is {Success: true} alignMatch) {
-            memberParts = HandleAlignment(structType, alignMatch, memberParts);
+        int lastSpace = member.LastIndexOf(' ');
+        if (lastSpace == -1) {
+            throw new Exception($"Could not parse member '{member}'");
         }
-        
-        if (memberParts.Length > 2
-            && (memberParts[0] == "unsigned"
-                || memberParts[0] == "signed"
-                || memberParts[0] == "long")) {
-            string token = memberParts[0].Trim();
-            memberParts = memberParts[1..];
-            memberParts[0] = $"{token} {memberParts[0]}";
-        }
-        
-        if (memberParts[0] == "struct" || memberParts[0] == "enum" || memberParts[0] == "union") {
-            memberParts = memberParts[1..];
-        }
-        
-        string memberType = memberParts[0].Trim();
-        string memberName = memberParts[1].Trim();
-        
-        bool nearPointer = HandleNearPointer(memberParts, ref memberName);
-        
-        int memberSize = memberName.Contains('*')
-            ? HandlePointer(nearPointer, ref memberType, ref memberName)
-            : GetSizeOf(memberType);
-        
+        var isPointer = false;
+        var isNear = false;
         var memberCount = 1;
-        if (memberName.Contains('[')) {
-            memberName = HandleArray(memberName, out memberCount);
+        
+        string fullType = member[..lastSpace].Trim();
+        string memberName = member[(lastSpace + 1)..].Trim();
+        if (memberName.Contains('*')) {
+            isPointer = true;
+            // Move the pointer symbol to the type
+            memberName = memberName.Replace("*", "");
+            fullType += "*";
         }
+        // Handle array
+        if (Regex.Match(memberName, @"\[(\d*)\]") is {Success: true} arrayMatch) {
+            int.TryParse(arrayMatch.Groups[1].Value, out memberCount);
+            memberName = Regex.Replace(memberName, @"\[\d*\]", string.Empty);
+        }
+        
+        string[]? typeParts = fullType.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        for (var index = 0; index < typeParts.Length; index++) {
+            string typePart = typeParts[index];
+            // Handle aligned attribute
+            if (Regex.Match(typePart, @"__attribute__\(\(aligned\((\d+)\)\)") is {Success: true} alignMatch) {
+                var alignment = int.Parse(alignMatch.Groups[1].Value);
+                // calculate the delta between the current size and the desired alignment
+                int delta = alignment - structType.Size % alignment;
+                // Insert a padding member of the required size
+                structType.AddVariable(new Variable("", "", 1, delta));
+                typeParts[index] = string.Empty;
+            }
+            // Remove superfluous struct, enum, union keywords
+            else if (typePart is "struct" or "enum" or "union") {
+                typeParts[index] = string.Empty;
+            }
+            // Check for near pointer
+            else if (typePart == "near*") {
+                // Remove the near pointer keyword from the type
+                typeParts[index] = string.Empty;
+                // Move the pointer symbol to the type pointed to
+                typeParts[index - 1] += "*";
+                isNear = true;
+            }
+            // Handle ghidra-style pointers
+            else if (typePart == "pointer") {
+                // Default to near pointer
+                isPointer = true;
+                isNear = true;
+            } else if (typePart == "pointer32") {
+                // far pointer?
+                // TODO: This needs more testing with Ghidra. What is the difference between a far pointer and an array of 2 near pointers?    
+                isPointer = true;
+                isNear = false;
+            } else if (Regex.Match(typePart, @"pointer(\d+)") is {Success: true} pointerMatch) {
+                // array of near pointers? See pointer112 in ghidra.h
+                isPointer = true;
+                isNear = true;
+                var bitCount = int.Parse(pointerMatch.Groups[1].Value);
+                memberCount = bitCount / 16;
+            }
+        }
+        string memberType = string.Join(" ", typeParts).Trim();
+        
+        int memberSize = isPointer ? isNear ? SizeOf16Bits : SizeOf32Bits : GetSizeOf(memberType);
         
         if (memberSize > maxSize) {
             maxSize = memberSize;
         }
         
-        var variable = new Variable(memberName, memberType, memberSize, memberCount);
-        structType.Members.Add(variable);
-        structType.Size += variable.Size;
+        var variable = new Variable(memberName, memberType, memberSize) {
+            Count = memberCount,
+            IsPointer = isPointer,
+            IsNear = isNear
+        };
+        structType.AddVariable(variable);
         
         return maxSize;
-    }
-    
-    private static string HandleArray(string memberName, out int memberCount) {
-        string[] arrayParts = memberName.Split('[', ']');
-        memberName = arrayParts[0].Trim();
-        memberCount = (int)IntParse(arrayParts[1]);
-        
-        return memberName;
-    }
-    
-    private int HandlePointer(bool nearPointer, ref string memberType, ref string memberName) {
-        memberType += "*";
-        memberName = memberName.Replace("*", "").Trim();
-        int memberSize = nearPointer ? config.DefaultPointerSize / 2 : config.DefaultPointerSize;
-        
-        return memberSize;
-    }
-    
-    private static bool HandleNearPointer(string[] memberParts, ref string memberName) {
-        bool nearPointer;
-        if (memberName == "near") {
-            nearPointer = true;
-            memberName = memberParts[2].Trim();
-        } else {
-            nearPointer = false;
-        }
-        
-        return nearPointer;
-    }
-    
-    private static string[] HandleAlignment(StructType structType, Match alignMatch, string[] memberParts) {
-        var alignment = int.Parse(alignMatch.Groups[1].Value);
-        // Increase the size of the previous variable to align this one with the specified number of bytes
-        int delta = structType.Size % alignment;
-        structType.Members[^1].Size += delta;
-        structType.Size += delta;
-        memberParts = memberParts[1..];
-        
-        return memberParts;
     }
     
     private void ParseEnums(string text) {

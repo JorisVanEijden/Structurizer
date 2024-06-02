@@ -17,7 +17,15 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="Structurizer.Tests"/>
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="System.Text.Json" Version="8.0.3"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="logo.png" Pack="true" PackagePath=""/>
     </ItemGroup>
 
 </Project>
