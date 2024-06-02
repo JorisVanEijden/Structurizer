@@ -10,7 +10,7 @@
         <Description>Small utility to parse C header files produced by IDA and Ghidra</Description>
         <Copyright>2024</Copyright>
         <PackageProjectUrl>https://github.com/JorisVanEijden/Structurizer</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/JorisVanEijden/Structurizer?tab=MIT-1-ov-file#MIT-1-ov-file</PackageLicenseUrl>
+        <PackageLicenseUrl>https://github.com/JorisVanEijden/Structurizer/blob/develop/LICENSE</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/JorisVanEijden/Structurizer</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageIcon>logo.png</PackageIcon>
