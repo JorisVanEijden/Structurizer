@@ -33,7 +33,6 @@ public class EnumTests {
         // Arrange
         var parser = new Parser(new Configuration());
         const string text = """
-                            /* enum test */
                             enum testEnum
                             {
                                 first,
@@ -58,7 +57,6 @@ public class EnumTests {
         // Arrange
         var parser = new Parser(new Configuration());
         const string text = """
-                            /* enum test */
                             enum testEnum
                             {
                                 first = 10,
@@ -83,7 +81,6 @@ public class EnumTests {
         // Arrange
         var parser = new Parser(new Configuration());
         const string text = """
-                            /* enum test */
                             enum testEnum
                             {
                                 first = 0x10,
@@ -108,7 +105,6 @@ public class EnumTests {
         // Arrange
         var parser = new Parser(new Configuration());
         const string text = """
-                            /* enum test */
                             enum testEnum
                             {
                                 first = -10,
@@ -133,7 +129,6 @@ public class EnumTests {
         // Arrange
         var parser = new Parser(new Configuration());
         const string text = """
-                            /* enum test */
                             enum testEnum : long
                             {
                                 first = 10,
@@ -168,5 +163,27 @@ public class EnumTests {
         Dictionary<long, string> members = result.Enums["testEnum"].Members;
         members.Count.Should().Be(4);
         members[30].Should().Be("third");
+    }
+    
+    [Fact]
+    public void EnumWithDuplicateMembers_ShouldUseAppendThemTogether() {
+        // Arrange
+        var parser = new Parser(new Configuration());
+        const string text = """
+                            enum testEnum
+                            {
+                                first = 123,
+                                second = 123,
+                            };
+                            """;
+        
+        // Act
+        ParseResult result = parser.ParseSource(text);
+        
+        // Assert
+        result.Enums.Should().ContainKey("testEnum");
+        Dictionary<long, string> members = result.Enums["testEnum"].Members;
+        members.Count.Should().Be(1);
+        members[123].Should().Be("first | second");
     }
 }

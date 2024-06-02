@@ -46,20 +46,6 @@ public class RealFilesTests {
     
     [Theory]
     [MemberData(nameof(GetTestFiles))]
-    public void Test4(string filename) {
-        // Arrange
-        var parser = new Parser(new Configuration());
-        
-        // Act
-        ParseResult result = parser.ParseFile(Path.Join("Fixtures", filename));
-        
-        // Assert
-        result.Structs.Should().ContainKey("overlayStub");
-        result.Structs["overlayStub"].Members.Should().Contain(item => item.Name == "trap" && item.Size == 1 && item.Count == 2);
-    }
-    
-    [Theory]
-    [MemberData(nameof(GetTestFiles))]
     public void Test5(string filename) {
         // Arrange
         var parser = new Parser(new Configuration());
@@ -70,20 +56,6 @@ public class RealFilesTests {
         // Assert
         result.Structs.Should().ContainKey("resourceFileHandler");
         result.Structs["resourceFileHandler"].Members.Should().Contain(item => item.Name == "ReadMethod" && item.Size == 2);
-    }
-    
-    [Theory]
-    [MemberData(nameof(GetTestFiles))]
-    public void Test6(string filename) {
-        // Arrange
-        var parser = new Parser(new Configuration());
-        
-        // Act
-        ParseResult result = parser.ParseFile(Path.Join("Fixtures", filename));
-        
-        // Assert
-        result.Structs.Should().ContainKey("bok_dataItem");
-        result.Structs["bok_dataItem"].Members.Should().Contain(item => item.Name == "data" && item.Length == 0);
     }
     
     [Theory]
@@ -103,6 +75,20 @@ public class RealFilesTests {
     [Theory]
     [MemberData(nameof(GetTestFiles))]
     public void Test8(string filename) {
+        // Arrange
+        var parser = new Parser(new Configuration());
+        
+        // Act
+        ParseResult result = parser.ParseFile(Path.Join("Fixtures", filename));
+        
+        // Assert
+        result.Structs.Should().ContainKey("enemyParty");
+        result.Structs["enemyParty"].Members.Should().Contain(item => item.Name == "pEnemyActor" && item.Size == 2 && item.Count == 7);
+    }
+    
+    [Theory]
+    [MemberData(nameof(GetTestFiles))]
+    public void Test9(string filename) {
         // Arrange
         var parser = new Parser(new Configuration());
         

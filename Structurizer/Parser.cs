@@ -3,6 +3,7 @@ namespace Structurizer;
 using Structurizer.Types;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -27,24 +28,21 @@ public class Parser(Configuration config) {
         ["int"] = new Variable("int", "int", SizeOf16Bits),
         ["long"] = new Variable("long", "long", SizeOf32Bits),
         ["_BYTE"] = new Variable("unsigned char", "unsigned char", SizeOf8Bits),
-        ["size_t"] = new Variable("size_t", "size_t", config.DefaultSizeT),
-        ["pointer"] = new Variable("pointer", "pointer", SizeOf16Bits) {
-            IsPointer = true,
-            IsNear = true
-        }
+        ["size_t"] = new Variable("size_t", "size_t", SizeOf16Bits)
     };
     
     public ParseResult ParseFile(string headerFilePath) {
         string text = File.ReadAllText(headerFilePath);
-        
-        File.WriteAllText("debug.h", text);
         
         try {
             ParseResult result = ParseSource(text);
             
             return result;
         } finally {
-            // Write formatted enums and structs to file
+            // Write formatted results to file for debugging
+            File.WriteAllText($"{headerFilePath}_typedefs.json", JsonSerializer.Serialize(_typeDefs, new JsonSerializerOptions {
+                WriteIndented = true
+            }));
             File.WriteAllText($"{headerFilePath}_enums.json", JsonSerializer.Serialize(_enums, new JsonSerializerOptions {
                 WriteIndented = true
             }));
@@ -67,47 +65,27 @@ public class Parser(Configuration config) {
         };
     }
     
-    private void ParseTypeDefs(string text) {
-        const string typedefPattern = @"typedef(\s+(\w+))+;";
-        MatchCollection matches = Regex.Matches(text, typedefPattern);
-        
-        foreach (Match match in matches) {
-            ParseTypeDef(match);
+    private bool TryParseTypeDef(Match match, [NotNullWhen(true)] out Variable? variable) {
+        try {
+            variable = ParseMember(match.Groups[1].Value.Trim());
+            
+            return true;
+        } catch (ArgumentException) {
+            variable = null;
+            
+            return false;
         }
     }
     
-    private void ParseTypeDef(Match match) {
-        string[] memberParts = match.Groups[2].Captures.Select(capture => capture.Value).ToArray();
-        var memberSize = 0;
-        if (memberParts.Length > 2) {
-            switch (memberParts[0]) {
-                case "long":
-                    memberParts = [$"{memberParts[0]} {memberParts[1]}", memberParts[2]];
-                    memberSize = GetSizeOf(memberParts[0]);
-                    
-                    break;
-                case "unsigned":
-                case "signed":
-                    memberSize = GetSizeOf(memberParts[1]);
-                    string sign = memberParts[0].Trim();
-                    memberParts = memberParts[1..];
-                    memberParts[0] = $"{sign} {memberParts[0]}";
-                    
-                    break;
-                case "struct":
-                    // Skip structs for now
-                    return;
-                
-                default:
-                    memberSize = GetSizeOf(memberParts[1]);
-                    
-                    break;
+    private void ParseTypeDefs(string text) {
+        const string typedefPattern = @"typedef\s+(.+);";
+        MatchCollection matches = Regex.Matches(text, typedefPattern);
+        
+        foreach (Match match in matches) {
+            if (TryParseTypeDef(match, out Variable? variable)) {
+                _typeDefs[variable.Name] = variable;
             }
         }
-        string memberType = memberParts[0].Trim();
-        string memberName = memberParts[1].Trim();
-        var variable = new Variable(memberName, memberType, memberSize);
-        _typeDefs[memberName] = variable;
     }
     
     private void ParseStructs(string text) {
@@ -136,7 +114,21 @@ public class Parser(Configuration config) {
             if (string.IsNullOrWhiteSpace(member)) {
                 continue;
             }
-            maxSize = ProcessMember(member, structType, maxSize);
+            Variable variable = ParseMember(member);
+            // Keep track of the biggest member to set the size of a union
+            if (variable.Size > maxSize) {
+                maxSize = variable.Size;
+            }
+            if (variable.Alignment > 1) {
+                // calculate the delta between the current size and the desired alignment
+                int delta = variable.Alignment - structType.Size % variable.Alignment;
+                // Insert a padding member of the required size
+                structType.AddVariable(new Variable("", "") {
+                    Size = 1,
+                    Count = delta
+                });
+            }
+            structType.AddVariable(variable);
         }
         if (structType.IsUnion) {
             structType.Size = maxSize;
@@ -144,7 +136,7 @@ public class Parser(Configuration config) {
         _structs[structName] = structType;
     }
     
-    private int ProcessMember(string member, StructType structType, int maxSize) {
+    private Variable ParseMember(string member) {
         int lastSpace = member.LastIndexOf(' ');
         if (lastSpace == -1) {
             throw new Exception($"Could not parse member '{member}'");
@@ -152,31 +144,32 @@ public class Parser(Configuration config) {
         var isPointer = false;
         var isNear = false;
         var memberCount = 1;
+        var alignment = 1;
         
         string fullType = member[..lastSpace].Trim();
         string memberName = member[(lastSpace + 1)..].Trim();
+        
+        // Handle pointers
         if (memberName.Contains('*')) {
             isPointer = true;
             // Move the pointer symbol to the type
             memberName = memberName.Replace("*", "");
             fullType += "*";
         }
+        
         // Handle array
         if (Regex.Match(memberName, @"\[(\d*)\]") is {Success: true} arrayMatch) {
             int.TryParse(arrayMatch.Groups[1].Value, out memberCount);
             memberName = Regex.Replace(memberName, @"\[\d*\]", string.Empty);
         }
         
+        // Loop through the type parts to handle special cases
         string[]? typeParts = fullType.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         for (var index = 0; index < typeParts.Length; index++) {
             string typePart = typeParts[index];
             // Handle aligned attribute
             if (Regex.Match(typePart, @"__attribute__\(\(aligned\((\d+)\)\)") is {Success: true} alignMatch) {
-                var alignment = int.Parse(alignMatch.Groups[1].Value);
-                // calculate the delta between the current size and the desired alignment
-                int delta = alignment - structType.Size % alignment;
-                // Insert a padding member of the required size
-                structType.AddVariable(new Variable("", "", 1, delta));
+                alignment = int.Parse(alignMatch.Groups[1].Value);
                 typeParts[index] = string.Empty;
             }
             // Remove superfluous struct, enum, union keywords
@@ -198,7 +191,7 @@ public class Parser(Configuration config) {
                 isNear = true;
             } else if (typePart == "pointer32") {
                 // far pointer?
-                // TODO: This needs more testing with Ghidra. What is the difference between a far pointer and an array of 2 near pointers?    
+                // Note: This needs more testing with Ghidra. What is the difference between a far pointer and an array of 2 near pointers?    
                 isPointer = true;
                 isNear = false;
             } else if (Regex.Match(typePart, @"pointer(\d+)") is {Success: true} pointerMatch) {
@@ -213,18 +206,15 @@ public class Parser(Configuration config) {
         
         int memberSize = isPointer ? isNear ? SizeOf16Bits : SizeOf32Bits : GetSizeOf(memberType);
         
-        if (memberSize > maxSize) {
-            maxSize = memberSize;
-        }
-        
-        var variable = new Variable(memberName, memberType, memberSize) {
+        var variable = new Variable(memberName, memberType) {
+            Size = memberSize,
             Count = memberCount,
             IsPointer = isPointer,
-            IsNear = isNear
+            IsNear = isNear,
+            Alignment = alignment
         };
-        structType.AddVariable(variable);
         
-        return maxSize;
+        return variable;
     }
     
     private void ParseEnums(string text) {
@@ -263,14 +253,22 @@ public class Parser(Configuration config) {
             return;
         }
         string memberName = member;
-        long memberValue = i;
+        
         try {
             string[]? memberParts = member.Split('=');
+            long memberValue;
             if (memberParts.Length == 2) {
                 memberName = memberParts[0].Trim();
                 memberValue = IntParse(memberParts[1].Trim());
+            } else {
+                memberValue = i;
             }
-            enumType.Members.TryAdd(memberValue, memberName);
+            // Add the member to the enum
+            bool unique = enumType.Members.TryAdd(memberValue, memberName);
+            if (!unique) {
+                // group members with the same value together
+                enumType.Members[memberValue] += $" | {memberName}";
+            }
         } catch (Exception e) {
             throw new Exception($"Could not parse enum member '{member}' in enum '{enumName}'", e);
         }

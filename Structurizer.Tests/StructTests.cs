@@ -134,12 +134,10 @@ public class StructTests {
         // Assert
         result.Should().NotBeNull();
         result.Structs.Should().ContainKey("testStruct");
-        StructType resultStruct = result.Structs["testStruct"];
-        resultStruct.Members[0].Should().BeEquivalentTo(new {
-            Size = 4,
-            IsPointer = true,
-            IsNear = false
-        });
+        Variable member = result.Structs["testStruct"].Members[0];
+        member.IsPointer.Should().BeTrue();
+        member.IsNear.Should().BeFalse();
+        member.Size.Should().Be(4);
     }
     
     [Fact]
@@ -159,12 +157,10 @@ public class StructTests {
         // Assert
         result.Should().NotBeNull();
         result.Structs.Should().ContainKey("testStruct");
-        StructType resultStruct = result.Structs["testStruct"];
-        resultStruct.Members[0].Should().BeEquivalentTo(new {
-            Size = 2,
-            IsPointer = true,
-            IsNear = true
-        });
+        Variable member = result.Structs["testStruct"].Members[0];
+        member.IsPointer.Should().BeTrue();
+        member.IsNear.Should().BeTrue();
+        member.Size.Should().Be(2);
     }
     
     [Fact]
@@ -184,11 +180,9 @@ public class StructTests {
         // Assert
         result.Should().NotBeNull();
         result.Structs.Should().ContainKey("testStruct");
-        StructType resultStruct = result.Structs["testStruct"];
-        resultStruct.Members[0].Should().BeEquivalentTo(new {
-            Size = 2,
-            IsPointer = true,
-            IsNear = true
-        });
+        Variable member = result.Structs["testStruct"].Members[0];
+        member.IsPointer.Should().BeTrue();
+        member.IsNear.Should().BeTrue();
+        member.Size.Should().Be(2);
     }
 }
