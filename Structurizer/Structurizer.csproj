@@ -13,6 +13,7 @@
         <PackageLicenseUrl>https://github.com/JorisVanEijden/Structurizer?tab=MIT-1-ov-file#MIT-1-ov-file</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/JorisVanEijden/Structurizer</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
+        <PackageIcon>logo.png</PackageIcon>
     </PropertyGroup>
 
     <ItemGroup>
