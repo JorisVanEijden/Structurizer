@@ -11,25 +11,10 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 
 public class Parser(Configuration config) {
-    private const int SizeOf8Bits = 1;
-    private const int SizeOf16Bits = 2;
-    private const int SizeOf32Bits = 4;
-    private const int SizeOf64Bits = 8;
     private readonly Dictionary<string, EnumType> _enums = new();
     private readonly Dictionary<string, StructType> _structs = new();
     
-    private readonly Dictionary<string, Variable> _typeDefs = new() {
-        ["__int8"] = new Variable("__int8", "__int8", SizeOf8Bits),
-        ["__int16"] = new Variable("__int16", "__int16", SizeOf16Bits),
-        ["__int32"] = new Variable("__int32", "__int32", SizeOf32Bits),
-        ["__int64"] = new Variable("__int64", "__int64", SizeOf64Bits),
-        ["char"] = new Variable("char", "char", SizeOf8Bits),
-        ["short"] = new Variable("short", "short", SizeOf16Bits),
-        ["int"] = new Variable("int", "int", SizeOf16Bits),
-        ["long"] = new Variable("long", "long", SizeOf32Bits),
-        ["_BYTE"] = new Variable("unsigned char", "unsigned char", SizeOf8Bits),
-        ["size_t"] = new Variable("size_t", "size_t", SizeOf16Bits)
-    };
+    private readonly Dictionary<string, Variable> _typeDefs = config.TypeDefs;
     
     public ParseResult ParseFile(string headerFilePath) {
         string text = File.ReadAllText(headerFilePath);
@@ -123,29 +108,26 @@ public class Parser(Configuration config) {
                 // calculate the delta between the current size and the desired alignment
                 int delta = variable.Alignment - structType.Size % variable.Alignment;
                 // Insert a padding member of the required size
-                structType.AddVariable(new Variable("", "") {
+                structType.Members.Add(new Variable("", "") {
                     Size = 1,
                     Count = delta
                 });
             }
-            structType.AddVariable(variable);
-        }
-        if (structType.IsUnion) {
-            structType.Size = maxSize;
+            structType.Members.Add(variable);
         }
         _structs[structName] = structType;
     }
     
     private Variable ParseMember(string member) {
-        int lastSpace = member.LastIndexOf(' ');
-        if (lastSpace == -1) {
-            throw new Exception($"Could not parse member '{member}'");
-        }
         var isPointer = false;
         var isNear = false;
         var memberCount = 1;
         var alignment = 1;
         
+        int lastSpace = member.LastIndexOf(' ');
+        if (lastSpace == -1) {
+            throw new Exception($"Could not parse member '{member}'");
+        }
         string fullType = member[..lastSpace].Trim();
         string memberName = member[(lastSpace + 1)..].Trim();
         
@@ -204,7 +186,7 @@ public class Parser(Configuration config) {
         }
         string memberType = string.Join(" ", typeParts).Trim();
         
-        int memberSize = isPointer ? isNear ? SizeOf16Bits : SizeOf32Bits : GetSizeOf(memberType);
+        int memberSize = isPointer ? isNear ? SizeInBytes.Of16Bits : SizeInBytes.Of32Bits : GetSizeOf(memberType);
         
         var variable = new Variable(memberName, memberType) {
             Size = memberSize,
@@ -234,43 +216,39 @@ public class Parser(Configuration config) {
         }
         string enumMembers = match.Groups[3].Value;
         
-        var enumType = new EnumType(enumName) {
+        var enumType = new EnumType {
             MemberSize = GetSizeOf(backingType)
         };
         
         string[]? members = enumMembers.Split(',', StringSplitOptions.RemoveEmptyEntries);
         
         for (var i = 0; i < members.Length; i++) {
-            ParseEnumMember(members, i, enumType, enumName);
+            ParseEnumMember(members, i, enumType);
         }
         
         _enums[enumName] = enumType;
     }
     
-    private static void ParseEnumMember(string[] members, int i, EnumType enumType, string enumName) {
+    private static void ParseEnumMember(string[] members, int i, EnumType enumType) {
         string member = members[i].Trim();
         if (string.IsNullOrWhiteSpace(member)) {
             return;
         }
         string memberName = member;
         
-        try {
-            string[]? memberParts = member.Split('=');
-            long memberValue;
-            if (memberParts.Length == 2) {
-                memberName = memberParts[0].Trim();
-                memberValue = IntParse(memberParts[1].Trim());
-            } else {
-                memberValue = i;
-            }
-            // Add the member to the enum
-            bool unique = enumType.Members.TryAdd(memberValue, memberName);
-            if (!unique) {
-                // group members with the same value together
-                enumType.Members[memberValue] += $" | {memberName}";
-            }
-        } catch (Exception e) {
-            throw new Exception($"Could not parse enum member '{member}' in enum '{enumName}'", e);
+        string[]? memberParts = member.Split('=');
+        long memberValue;
+        if (memberParts.Length == 2) {
+            memberName = memberParts[0].Trim();
+            memberValue = IntParse(memberParts[1].Trim());
+        } else {
+            memberValue = i;
+        }
+        // Add the member to the enum
+        bool unique = enumType.Members.TryAdd(memberValue, memberName);
+        if (!unique) {
+            // group members with the same value together
+            enumType.Members[memberValue] += $" | {memberName}";
         }
     }
     
@@ -302,10 +280,6 @@ public class Parser(Configuration config) {
             return structType.Size;
         }
         
-        if (type.StartsWith("pointer") && int.TryParse(type[7..], out int sizeInBits)) {
-            return sizeInBits / 8;
-        }
-        
         throw new ArgumentException($"Could not determine size of type '{type}'", nameof(type));
     }
     
@@ -319,7 +293,7 @@ public class Parser(Configuration config) {
                 ? long.Parse(input[2..], NumberStyles.HexNumber)
                 : long.Parse(input);
         } catch (Exception e) {
-            throw new Exception($"Could not parse int from '{input}'", e);
+            throw new ArgumentException($"Could not parse int from '{input}'", e);
         }
         
         return result;

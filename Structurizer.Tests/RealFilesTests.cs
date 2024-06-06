@@ -1,6 +1,7 @@
 namespace Structurizer.Tests;
 
 using Structurizer.Types;
+using System.Text.Json.Nodes;
 
 public class RealFilesTests {
     [Theory]
@@ -90,14 +91,19 @@ public class RealFilesTests {
     [MemberData(nameof(GetTestFiles))]
     public void Test9(string filename) {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var configuration = new Configuration();
+        var parser = new Parser(configuration);
         
         // Act
-        ParseResult result = parser.ParseFile(Path.Join("Fixtures", filename));
+        ParseResult parseResult = parser.ParseFile(Path.Join("Fixtures", filename));
+        var formatter = new Formatter(configuration, parseResult);
+        ReadOnlySpan<byte> bytes = new byte[] {
+            0x02, 0x00, 0x03, 0x00, 0x00, 0x00, 0xFF, 0x00
+        };
+        JsonNode result = formatter.Format(new Variable("var", "dialogAction_ApplyCondition"), bytes);
         
         // Assert
-        result.Structs.Should().ContainKey("enemyParty");
-        result.Structs["enemyParty"].Members.Should().Contain(item => item.Name == "pEnemyActor" && item.Size == 2 && item.Count == 7);
+        result.ToJsonString().Should().Be("""{"target":2,"condition":"condition_drunk","minValue":0,"maxValue":255}""");
     }
     
     public static IEnumerable<object[]> GetTestFiles() {

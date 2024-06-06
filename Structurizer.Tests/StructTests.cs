@@ -185,4 +185,28 @@ public class StructTests {
         member.IsNear.Should().BeTrue();
         member.Size.Should().Be(2);
     }
+    
+    [Fact]
+    public void NestedStructs_ShouldBeParsedCorrectly() {
+        // Arrange
+        var parser = new Parser(new Configuration());
+        const string text = """
+                            struct innerStruct
+                            {
+                              __int8 charMember;
+                            };
+                            struct outerStruct
+                            {
+                                innerStruct innerMember;
+                            };
+                            """;
+        
+        // Act
+        ParseResult result = parser.ParseSource(text);
+        
+        // Assert
+        result.Should().NotBeNull();
+        result.Structs.Should().ContainKey("outerStruct");
+        result.Structs[result.Structs["outerStruct"].Members[0].Type].Members[0].Type.Should().Be("__int8");
+    }
 }

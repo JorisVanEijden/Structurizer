@@ -1899,7 +1899,7 @@ struct dialogAction_GetAttribute {
 
 struct dialogAction_ApplyCondition {
     word target;
-    word condition;
+    conditionNumber condition;
     word minValue;
     word maxValue;
 };
