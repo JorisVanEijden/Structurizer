@@ -3,7 +3,7 @@ namespace Structurizer;
 using Structurizer.Types;
 using System.Collections.Generic;
 
-public class Configuration(Dictionary<string, Variable>? typeDefs = null) {
+public class StructurizerSettings(Dictionary<string, Variable>? typeDefs = null) {
     public string DefaultEnumBackingType { get; set; } = "short";
     
     public Dictionary<string, Variable> TypeDefs { get; set; } = typeDefs ?? new Dictionary<string, Variable> {

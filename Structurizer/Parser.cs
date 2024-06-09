@@ -10,17 +10,17 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-public class Parser(Configuration config) {
+public class Parser(StructurizerSettings config) {
     private readonly Dictionary<string, EnumType> _enums = new();
     private readonly Dictionary<string, StructType> _structs = new();
     
     private readonly Dictionary<string, Variable> _typeDefs = config.TypeDefs;
     
-    public ParseResult ParseFile(string headerFilePath) {
+    public StructureInformation ParseFile(string headerFilePath) {
         string text = File.ReadAllText(headerFilePath);
         
         try {
-            ParseResult result = ParseSource(text);
+            StructureInformation result = ParseSource(text);
             
             return result;
         } finally {
@@ -37,13 +37,13 @@ public class Parser(Configuration config) {
         }
     }
     
-    public ParseResult ParseSource(string text) {
+    public StructureInformation ParseSource(string text) {
         text = PreProcess(text);
         ParseTypeDefs(text);
         ParseEnums(text);
         ParseStructs(text);
         
-        return new ParseResult {
+        return new StructureInformation {
             Enums = _enums,
             Structs = _structs,
             TypeDefs = _typeDefs

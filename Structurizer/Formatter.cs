@@ -12,7 +12,7 @@ public class Formatter {
     private readonly Dictionary<string, StructType>? _structs;
     private readonly Dictionary<string, Variable>? _typeDefs;
     
-    public Formatter(Configuration config, ParseResult? parseResult = null) {
+    public Formatter(StructurizerSettings config, StructureInformation? parseResult = null) {
         _structs = parseResult?.Structs;
         _enums = parseResult?.Enums;
         _typeDefs = parseResult?.TypeDefs.Any() is true ? parseResult.TypeDefs : config.TypeDefs;
