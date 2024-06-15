@@ -8,10 +8,10 @@ public class RealFilesTests {
     [MemberData(nameof(GetTestFiles))]
     public void TestFileParsing(string filename) {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         
         // Act
-        ParseResult result = parser.ParseFile(Path.Join("Fixtures", filename));
+        StructureInformation result = parser.ParseFile(Path.Join("Fixtures", filename));
         
         // Assert
         result.Should().NotBeNull();
@@ -21,10 +21,10 @@ public class RealFilesTests {
     [MemberData(nameof(GetTestFiles))]
     public void Test2(string filename) {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         
         // Act
-        ParseResult result = parser.ParseFile(Path.Join("Fixtures", filename));
+        StructureInformation result = parser.ParseFile(Path.Join("Fixtures", filename));
         
         // Assert
         result.Enums.Should().ContainKey("WhichValue");
@@ -35,10 +35,10 @@ public class RealFilesTests {
     [MemberData(nameof(GetTestFiles))]
     public void Test3(string filename) {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         
         // Act
-        ParseResult result = parser.ParseFile(Path.Join("Fixtures", filename));
+        StructureInformation result = parser.ParseFile(Path.Join("Fixtures", filename));
         
         // Assert
         result.Structs.Should().ContainKey("worldTile");
@@ -49,10 +49,10 @@ public class RealFilesTests {
     [MemberData(nameof(GetTestFiles))]
     public void Test5(string filename) {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         
         // Act
-        ParseResult result = parser.ParseFile(Path.Join("Fixtures", filename));
+        StructureInformation result = parser.ParseFile(Path.Join("Fixtures", filename));
         
         // Assert
         result.Structs.Should().ContainKey("resourceFileHandler");
@@ -63,10 +63,10 @@ public class RealFilesTests {
     [MemberData(nameof(GetTestFiles))]
     public void Test7(string filename) {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         
         // Act
-        ParseResult result = parser.ParseFile(Path.Join("Fixtures", filename));
+        StructureInformation result = parser.ParseFile(Path.Join("Fixtures", filename));
         
         // Assert
         result.Enums.Should().ContainKey("DisplayCombination");
@@ -77,10 +77,10 @@ public class RealFilesTests {
     [MemberData(nameof(GetTestFiles))]
     public void Test8(string filename) {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         
         // Act
-        ParseResult result = parser.ParseFile(Path.Join("Fixtures", filename));
+        StructureInformation result = parser.ParseFile(Path.Join("Fixtures", filename));
         
         // Assert
         result.Structs.Should().ContainKey("enemyParty");
@@ -91,11 +91,11 @@ public class RealFilesTests {
     [MemberData(nameof(GetTestFiles))]
     public void Test9(string filename) {
         // Arrange
-        var configuration = new Configuration();
+        var configuration = new StructurizerSettings();
         var parser = new Parser(configuration);
         
         // Act
-        ParseResult parseResult = parser.ParseFile(Path.Join("Fixtures", filename));
+        StructureInformation parseResult = parser.ParseFile(Path.Join("Fixtures", filename));
         var formatter = new Formatter(configuration, parseResult);
         ReadOnlySpan<byte> bytes = new byte[] {
             0x02, 0x00, 0x03, 0x00, 0x00, 0x00, 0xFF, 0x00

@@ -6,7 +6,7 @@ public class StructTests {
     [Fact]
     public void Struct_CanBeParsed() {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         const string text = """
                             /* struct test */
                             #pragma pack(push, 2)
@@ -18,7 +18,7 @@ public class StructTests {
                             """;
         
         // Act
-        ParseResult result = parser.ParseSource(text);
+        StructureInformation result = parser.ParseSource(text);
         
         // Assert
         result.Should().NotBeNull();
@@ -36,7 +36,7 @@ public class StructTests {
     [Fact]
     public void StructWithDifferentSizedMembers_ShouldBeSizeOfAllMembersCombined() {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         const string text = """
                             struct testStruct
                             {
@@ -48,7 +48,7 @@ public class StructTests {
                             """;
         
         // Act
-        ParseResult result = parser.ParseSource(text);
+        StructureInformation result = parser.ParseSource(text);
         
         // Assert
         result.Should().NotBeNull();
@@ -61,7 +61,7 @@ public class StructTests {
     [Fact]
     public void StructAlignedAttributeOf2_ShouldAlignTo2ByInsertingZero() {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         const string text = """
                             struct testStruct
                             {
@@ -73,7 +73,7 @@ public class StructTests {
                             """;
         
         // Act
-        ParseResult result = parser.ParseSource(text);
+        StructureInformation result = parser.ParseSource(text);
         
         // Assert
         result.Should().NotBeNull();
@@ -91,7 +91,7 @@ public class StructTests {
     [Fact]
     public void StructAlignedAttributeOf4_ShouldAlignTo4ByInserting3Empty() {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         const string text = """
                             struct testStruct
                             {
@@ -102,7 +102,7 @@ public class StructTests {
                             """;
         
         // Act
-        ParseResult result = parser.ParseSource(text);
+        StructureInformation result = parser.ParseSource(text);
         
         // Assert
         result.Should().NotBeNull();
@@ -120,7 +120,7 @@ public class StructTests {
     [Fact]
     public void StructWithPointerMember_ShouldUseSizeOfPointer() {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         const string text = """
                             struct testStruct
                             {
@@ -129,7 +129,7 @@ public class StructTests {
                             """;
         
         // Act
-        ParseResult result = parser.ParseSource(text);
+        StructureInformation result = parser.ParseSource(text);
         
         // Assert
         result.Should().NotBeNull();
@@ -143,7 +143,7 @@ public class StructTests {
     [Fact]
     public void StructWithNearPointerMember_ShouldUseSizeOfNearPointer() {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         const string text = """
                             struct testStruct
                             {
@@ -152,7 +152,7 @@ public class StructTests {
                             """;
         
         // Act
-        ParseResult result = parser.ParseSource(text);
+        StructureInformation result = parser.ParseSource(text);
         
         // Assert
         result.Should().NotBeNull();
@@ -166,7 +166,7 @@ public class StructTests {
     [Fact]
     public void StructWithGhidraPointerMember_ShouldBeTreatedAsNearPointer() {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         const string text = """
                             struct testStruct
                             {
@@ -175,7 +175,7 @@ public class StructTests {
                             """;
         
         // Act
-        ParseResult result = parser.ParseSource(text);
+        StructureInformation result = parser.ParseSource(text);
         
         // Assert
         result.Should().NotBeNull();
@@ -189,7 +189,7 @@ public class StructTests {
     [Fact]
     public void NestedStructs_ShouldBeParsedCorrectly() {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         const string text = """
                             struct innerStruct
                             {
@@ -202,7 +202,7 @@ public class StructTests {
                             """;
         
         // Act
-        ParseResult result = parser.ParseSource(text);
+        StructureInformation result = parser.ParseSource(text);
         
         // Assert
         result.Should().NotBeNull();

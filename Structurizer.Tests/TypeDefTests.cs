@@ -6,11 +6,11 @@ public class TypeDefTests {
     [Fact]
     public void TypeDef_CanBeParsed() {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         const string text = "typedef short testTypeDef;";
         
         // Act
-        ParseResult result = parser.ParseSource(text);
+        StructureInformation result = parser.ParseSource(text);
         
         // Assert
         result.Should().NotBeNull();

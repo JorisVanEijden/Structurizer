@@ -4,10 +4,10 @@ using Structurizer.Types;
 using System.Text.Json.Nodes;
 
 public class FormatterTests {
-    private readonly Configuration _config;
+    private readonly StructurizerSettings _config;
     
     public FormatterTests() {
-        _config = new Configuration();
+        _config = new StructurizerSettings();
     }
     
     [Fact]
@@ -126,7 +126,7 @@ public class FormatterTests {
     public void Formatting_Struct_FormatsStructsRecursively() {
         // Arrange
         // A struct to embed into another.
-        var parseResult = new ParseResult {
+        var parseResult = new StructureInformation {
             Structs = new Dictionary<string, StructType> {
                 ["TestStruct2"] = new("TestStruct2") {
                     Members = [
@@ -189,7 +189,7 @@ public class FormatterTests {
     [Fact]
     public void Formatting_EnumMember_ShowsValueName() {
         // Arrange
-        var parseResult = new ParseResult {
+        var parseResult = new StructureInformation {
             Enums = new Dictionary<string, EnumType> {
                 ["TestEnum"] = new() {
                     MemberSize = 2,
@@ -217,7 +217,7 @@ public class FormatterTests {
     [Fact]
     public void Formatting_EnumMemberInStruct_ShowsValueName() {
         // Arrange
-        var parseResult = new ParseResult {
+        var parseResult = new StructureInformation {
             Enums = new Dictionary<string, EnumType> {
                 ["TestEnum"] = new() {
                     MemberSize = 2,

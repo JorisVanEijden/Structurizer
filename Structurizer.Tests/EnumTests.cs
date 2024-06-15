@@ -6,7 +6,7 @@ public class EnumTests {
     [Fact]
     public void EnumWithoutValues_ShouldUseIndex() {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         const string text = """
                             /* enum test */
                             enum testEnum
@@ -19,7 +19,7 @@ public class EnumTests {
                             """;
         
         // Act
-        ParseResult result = parser.ParseSource(text);
+        StructureInformation result = parser.ParseSource(text);
         
         // Assert
         result.Enums.Should().ContainKey("testEnum");
@@ -31,7 +31,7 @@ public class EnumTests {
     [Fact]
     public void EnumWithTrailingComma_ShouldIgnoreExtraComma() {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         const string text = """
                             enum testEnum
                             {
@@ -43,7 +43,7 @@ public class EnumTests {
                             """;
         
         // Act
-        ParseResult result = parser.ParseSource(text);
+        StructureInformation result = parser.ParseSource(text);
         
         // Assert
         result.Enums.Should().ContainKey("testEnum");
@@ -55,7 +55,7 @@ public class EnumTests {
     [Fact]
     public void EnumWithValues_ShouldUseValues() {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         const string text = """
                             enum testEnum
                             {
@@ -67,7 +67,7 @@ public class EnumTests {
                             """;
         
         // Act
-        ParseResult result = parser.ParseSource(text);
+        StructureInformation result = parser.ParseSource(text);
         
         // Assert
         result.Enums.Should().ContainKey("testEnum");
@@ -79,7 +79,7 @@ public class EnumTests {
     [Fact]
     public void EnumWithHexadecimalValues_ShouldUseValues() {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         const string text = """
                             enum testEnum
                             {
@@ -91,7 +91,7 @@ public class EnumTests {
                             """;
         
         // Act
-        ParseResult result = parser.ParseSource(text);
+        StructureInformation result = parser.ParseSource(text);
         
         // Assert
         result.Enums.Should().ContainKey("testEnum");
@@ -103,7 +103,7 @@ public class EnumTests {
     [Fact]
     public void EnumWithNegativeValues_ShouldUseValues() {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         const string text = """
                             enum testEnum
                             {
@@ -115,7 +115,7 @@ public class EnumTests {
                             """;
         
         // Act
-        ParseResult result = parser.ParseSource(text);
+        StructureInformation result = parser.ParseSource(text);
         
         // Assert
         result.Enums.Should().ContainKey("testEnum");
@@ -127,7 +127,7 @@ public class EnumTests {
     [Fact]
     public void EnumWithDifferentBackingSize_ShouldRecordThatSize() {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         const string text = """
                             enum testEnum : long
                             {
@@ -137,7 +137,7 @@ public class EnumTests {
                             """;
         
         // Act
-        ParseResult result = parser.ParseSource(text);
+        StructureInformation result = parser.ParseSource(text);
         
         // Assert
         result.Enums.Should().ContainKey("testEnum");
@@ -147,7 +147,7 @@ public class EnumTests {
     [Fact]
     public void EnumWithDifferentWhiteSpace_ShouldParseNormally() {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         const string text = """
                             /* enum test */ enum testEnum
                             { first=10,
@@ -156,7 +156,7 @@ public class EnumTests {
                             """;
         
         // Act
-        ParseResult result = parser.ParseSource(text);
+        StructureInformation result = parser.ParseSource(text);
         
         // Assert
         result.Enums.Should().ContainKey("testEnum");
@@ -168,7 +168,7 @@ public class EnumTests {
     [Fact]
     public void EnumWithDuplicateMembers_ShouldUseAppendThemTogether() {
         // Arrange
-        var parser = new Parser(new Configuration());
+        var parser = new Parser(new StructurizerSettings());
         const string text = """
                             enum testEnum
                             {
@@ -178,7 +178,7 @@ public class EnumTests {
                             """;
         
         // Act
-        ParseResult result = parser.ParseSource(text);
+        StructureInformation result = parser.ParseSource(text);
         
         // Assert
         result.Enums.Should().ContainKey("testEnum");
