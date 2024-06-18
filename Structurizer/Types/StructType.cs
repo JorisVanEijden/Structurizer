@@ -10,6 +10,6 @@ public class StructType(string name) {
         get => IsUnion ? Members.Max(m => m.Length) : Members.Sum(m => m.Length);
     }
     
-    public List<Variable> Members { get; set; } = [];
+    public List<TypeDefinition> Members { get; set; } = [];
     public bool IsUnion { get; set; }
 }

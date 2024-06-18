@@ -2,7 +2,7 @@ namespace Structurizer.Tests;
 
 using Structurizer.Types;
 
-public class TypeDefTests {
+public class TypeDefinitionTests {
     [Fact]
     public void TypeDef_CanBeParsed() {
         // Arrange
@@ -15,9 +15,9 @@ public class TypeDefTests {
         // Assert
         result.Should().NotBeNull();
         result.TypeDefs.Should().ContainKey("testTypeDef");
-        Variable resultTypeDef = result.TypeDefs["testTypeDef"];
-        resultTypeDef.Size.Should().Be(2);
-        resultTypeDef.Name.Should().Be("testTypeDef");
-        resultTypeDef.Type.Should().Be("short");
+        TypeDefinition resultTypeDefinitionDefinition = result.TypeDefs["testTypeDef"];
+        resultTypeDefinitionDefinition.Size.Should().Be(2);
+        resultTypeDefinitionDefinition.Name.Should().Be("testTypeDef");
+        resultTypeDefinitionDefinition.Type.Should().Be("short");
     }
 }

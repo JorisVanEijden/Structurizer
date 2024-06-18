@@ -3,10 +3,10 @@ namespace Structurizer;
 using Structurizer.Types;
 using System.Collections.Generic;
 
-public class StructurizerSettings(Dictionary<string, Variable>? typeDefs = null) {
+public class StructurizerSettings(Dictionary<string, TypeDefinition>? typeDefs = null) {
     public string DefaultEnumBackingType { get; set; } = "short";
     
-    public Dictionary<string, Variable> TypeDefs { get; set; } = typeDefs ?? new Dictionary<string, Variable> {
+    public Dictionary<string, TypeDefinition> TypeDefs { get; set; } = typeDefs ?? new Dictionary<string, TypeDefinition> {
         ["__int8"] = new("char", "char", SizeInBytes.Of8Bits),
         ["__int16"] = new("short", "short", SizeInBytes.Of16Bits),
         ["__int32"] = new("long", "long", SizeInBytes.Of32Bits),

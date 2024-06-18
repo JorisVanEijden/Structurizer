@@ -8,79 +8,140 @@ using System.Text;
 using System.Text.Json.Nodes;
 
 public class Formatter {
-    private readonly Dictionary<string, EnumType>? _enums;
-    private readonly Dictionary<string, StructType>? _structs;
-    private readonly Dictionary<string, Variable>? _typeDefs;
+    protected readonly Dictionary<string, EnumType>? Enums;
+    protected readonly Dictionary<string, StructType>? Structs;
+    protected readonly Dictionary<string, TypeDefinition>? TypeDefs;
 
     public Formatter(StructurizerSettings config, StructureInformation? parseResult = null) {
-        _structs = parseResult?.Structs;
-        _enums = parseResult?.Enums;
-        _typeDefs = parseResult?.TypeDefs.Any() is true ? parseResult.TypeDefs : config.TypeDefs;
+        Structs = parseResult?.Structs;
+        Enums = parseResult?.Enums;
+        TypeDefs = parseResult?.TypeDefs.Any() is true ? parseResult.TypeDefs : config.TypeDefs;
     }
 
-    public virtual JsonNode Format(Variable variable, ReadOnlySpan<byte> bytes) {
-        // slice the bytes into variable.Count pieces of variable.Size bytes
-        var slices = new byte[variable.Count][];
-        for (var i = 0; i < variable.Count; i++) {
-            slices[i] = bytes.Slice(i * variable.Size, variable.Size).ToArray();
+    public virtual JsonNode Format(TypeDefinition typeDefinition, ReadOnlySpan<byte> bytes) {
+        if (Structs != null && Structs.TryGetValue(typeDefinition.Type, out StructType? structType)) {
+            return typeDefinition.IsArray ? FormatStructArray(structType, bytes) : FormatStruct(structType, bytes);
         }
 
-        if (_structs != null && _structs.TryGetValue(variable.Type, out StructType? structType)) {
-            if (variable.Count > 1) {
-                return new JsonArray(slices.Select(slice => FormatStruct(structType, slice) as JsonNode).ToArray());
-            }
-
-            return FormatStruct(structType, bytes);
+        if (Enums != null && Enums.TryGetValue(typeDefinition.Type, out EnumType? enumType)) {
+            return typeDefinition.IsArray ? FormatEnumArray(enumType, bytes) : FormatEnum(enumType, bytes);
         }
 
-        if (_enums != null && _enums.TryGetValue(variable.Type, out EnumType? enumType)) {
-            if (variable.Count > 1) {
-                return new JsonArray(slices.Select(slice => FormatEnum(enumType, slice) as JsonNode).ToArray());
-            }
-
-            return FormatEnum(enumType, bytes);
-        }
-
-        if (variable.Count > 1) {
-            var singleVariable = new Variable(variable.Name, variable.Type, variable.Size) {
-                Count = 1,
-                IsPointer = variable.IsPointer,
-                IsNear = variable.IsNear,
-                Alignment = variable.Alignment
-            };
-
-            return new JsonArray(slices.Select(slice => FormatType(singleVariable, slice) as JsonNode).ToArray());
-        }
-
-        return FormatType(variable, bytes);
+        return typeDefinition.IsArray ? FormatTypeArray(typeDefinition, bytes) : FormatType(typeDefinition, bytes);
     }
 
-    private JsonValue FormatType(Variable variable, ReadOnlySpan<byte> bytes) {
-        switch (variable.Type) {
+    protected virtual JsonNode FormatTypeArray(TypeDefinition typeDefinition, ReadOnlySpan<byte> data) {
+        var singleVariable = new TypeDefinition(typeDefinition.Name, typeDefinition.Type, typeDefinition.Size) {
+            Count = 1,
+            IsPointer = typeDefinition.IsPointer,
+            IsNear = typeDefinition.IsNear,
+            Alignment = typeDefinition.Alignment
+        };
+
+        int numberOfItems = data.Length / singleVariable.Size;
+        var items = new List<JsonNode>(numberOfItems);
+
+        for (var index = 0; index < numberOfItems; index += singleVariable.Size) {
+            byte[]? slice = data.Slice(index, singleVariable.Size).ToArray();
+            JsonValue item = FormatType(singleVariable, slice);
+            items.Add(item);
+        }
+
+        return new JsonArray(items.ToArray());
+    }
+
+    protected virtual JsonArray FormatEnumArray(EnumType enumType, ReadOnlySpan<byte> data) {
+        int numberOfItems = data.Length / enumType.MemberSize;
+        var items = new List<JsonNode>(numberOfItems);
+
+        for (var index = 0; index < numberOfItems; index += enumType.MemberSize) {
+            byte[]? slice = data.Slice(index, enumType.MemberSize).ToArray();
+            JsonValue item = FormatEnum(enumType, slice);
+            items.Add(item);
+        }
+
+        return new JsonArray(items.ToArray());
+    }
+
+    protected virtual JsonArray FormatStructArray(StructType structType, ReadOnlySpan<byte> data) {
+        int numberOfItems = data.Length / structType.Size;
+        var items = new List<JsonNode>(numberOfItems);
+
+        for (var index = 0; index < numberOfItems; index += structType.Size) {
+            byte[]? slice = data.Slice(index, structType.Size).ToArray();
+            JsonObject item = FormatStruct(structType, slice);
+            items.Add(item);
+        }
+
+        return new JsonArray(items.ToArray());
+    }
+
+    protected virtual JsonValue FormatType(TypeDefinition typeDefinition, ReadOnlySpan<byte> bytes) {
+        switch (typeDefinition.Type) {
             case "short" or "int":
-                return JsonValue.Create(BitConverter.ToInt16(bytes));
+                return FormatShort(bytes);
             case "unsigned short" or "unsigned int":
-                return JsonValue.Create(BitConverter.ToUInt16(bytes));
+                return FormatUnsignedShort(bytes);
             case "long":
-                return JsonValue.Create(BitConverter.ToInt32(bytes));
+                return FormatLong(bytes);
             case "unsigned long":
-                return JsonValue.Create(BitConverter.ToUInt32(bytes));
+                return FormatUnsignedLong(bytes);
         }
-        switch (variable) {
-            case {Type: "char", Count: > 1}:
-                return JsonValue.Create(Encoding.ASCII.GetString(bytes));
-            case {Type: "char", Count: 1}:
-                return JsonValue.Create(BitConverter.ToChar(bytes));
-        }
-
-        if (_typeDefs != null && _typeDefs.TryGetValue(variable.Type, out Variable? typeDef)) {
-            return Format(typeDef, bytes).AsValue();
+        switch (typeDefinition) {
+            case {Type: "char", IsArray: true}:
+                return FormatCharArray(bytes);
+            case {Type: "char", IsArray: false}:
+                return FormatChar(bytes);
         }
 
-        throw new NotSupportedException($"Type {variable.Type} not supported");
+        if (TypeDefs != null && TypeDefs.TryGetValue(typeDefinition.Type, out TypeDefinition? knownTypeDef)) {
+            return Format(knownTypeDef, bytes).AsValue();
+        }
+
+        if (typeDefinition.IsPointer) {
+            return FormatPointer(typeDefinition, bytes);
+        }
+
+        throw new NotSupportedException($"Type {typeDefinition.Type} not supported");
     }
 
-    private static JsonValue FormatEnum(EnumType enumType, ReadOnlySpan<byte> bytes) {
+    protected virtual JsonValue FormatPointer(TypeDefinition typeDefinition, ReadOnlySpan<byte> bytes) {
+        return typeDefinition.IsNear ? FormatNearPointer(bytes) : FormatPointer(bytes);
+    }
+
+    protected virtual JsonValue FormatPointer(ReadOnlySpan<byte> bytes) {
+        return JsonValue.Create(BitConverter.ToUInt32(bytes));
+    }
+
+    protected virtual JsonValue FormatNearPointer(ReadOnlySpan<byte> bytes) {
+        return JsonValue.Create(BitConverter.ToUInt16(bytes));
+    }
+
+    protected virtual JsonValue FormatChar(ReadOnlySpan<byte> bytes) {
+        return JsonValue.Create(bytes[0]);
+    }
+
+    protected virtual JsonValue FormatCharArray(ReadOnlySpan<byte> bytes) {
+        return JsonValue.Create(Encoding.ASCII.GetString(bytes));
+    }
+
+    protected virtual JsonValue FormatUnsignedLong(ReadOnlySpan<byte> bytes) {
+        return JsonValue.Create(BitConverter.ToUInt32(bytes));
+    }
+
+    protected virtual JsonValue FormatLong(ReadOnlySpan<byte> bytes) {
+        return JsonValue.Create(BitConverter.ToInt32(bytes));
+    }
+
+    protected virtual JsonValue FormatUnsignedShort(ReadOnlySpan<byte> bytes) {
+        return JsonValue.Create(BitConverter.ToUInt16(bytes));
+    }
+
+    protected virtual JsonValue FormatShort(ReadOnlySpan<byte> bytes) {
+        return JsonValue.Create(BitConverter.ToInt16(bytes));
+    }
+
+    protected virtual JsonValue FormatEnum(EnumType enumType, ReadOnlySpan<byte> bytes) {
         uint value = enumType.MemberSize switch {
             1 => bytes[0],
             2 => BitConverter.ToUInt16(bytes),
@@ -104,7 +165,7 @@ public class Formatter {
 
         ReadOnlySpan<byte> structBytes = bytes[..structType.Size];
         var index = 0;
-        foreach (Variable? member in structType.Members) {
+        foreach (TypeDefinition? member in structType.Members) {
             ReadOnlySpan<byte> memberBytes = structBytes.Slice(index, member.Length);
             JsonNode memberValue = Format(member, memberBytes);
             result.Add(member.Name, memberValue);

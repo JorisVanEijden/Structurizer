@@ -14,7 +14,7 @@ public class Parser(StructurizerSettings config) {
     private readonly Dictionary<string, EnumType> _enums = new();
     private readonly Dictionary<string, StructType> _structs = new();
     
-    private readonly Dictionary<string, Variable> _typeDefs = config.TypeDefs;
+    private readonly Dictionary<string, TypeDefinition> _typeDefs = config.TypeDefs;
     
     public StructureInformation ParseFile(string headerFilePath) {
         string text = File.ReadAllText(headerFilePath);
@@ -50,7 +50,7 @@ public class Parser(StructurizerSettings config) {
         };
     }
     
-    private bool TryParseTypeDef(Match match, [NotNullWhen(true)] out Variable? variable) {
+    private bool TryParseTypeDef(Match match, [NotNullWhen(true)] out TypeDefinition? variable) {
         try {
             variable = ParseMember(match.Groups[1].Value.Trim());
             
@@ -67,7 +67,7 @@ public class Parser(StructurizerSettings config) {
         MatchCollection matches = Regex.Matches(text, typedefPattern);
         
         foreach (Match match in matches) {
-            if (TryParseTypeDef(match, out Variable? variable)) {
+            if (TryParseTypeDef(match, out TypeDefinition? variable)) {
                 _typeDefs[variable.Name] = variable;
             }
         }
@@ -99,26 +99,26 @@ public class Parser(StructurizerSettings config) {
             if (string.IsNullOrWhiteSpace(member)) {
                 continue;
             }
-            Variable variable = ParseMember(member);
+            TypeDefinition typeDefinition = ParseMember(member);
             // Keep track of the biggest member to set the size of a union
-            if (variable.Size > maxSize) {
-                maxSize = variable.Size;
+            if (typeDefinition.Size > maxSize) {
+                maxSize = typeDefinition.Size;
             }
-            if (variable.Alignment > 1) {
+            if (typeDefinition.Alignment > 1) {
                 // calculate the delta between the current size and the desired alignment
-                int delta = variable.Alignment - structType.Size % variable.Alignment;
+                int delta = typeDefinition.Alignment - structType.Size % typeDefinition.Alignment;
                 // Insert a padding member of the required size
-                structType.Members.Add(new Variable("", "") {
+                structType.Members.Add(new TypeDefinition("", "") {
                     Size = 1,
                     Count = delta
                 });
             }
-            structType.Members.Add(variable);
+            structType.Members.Add(typeDefinition);
         }
         _structs[structName] = structType;
     }
     
-    private Variable ParseMember(string member) {
+    private TypeDefinition ParseMember(string member) {
         var isPointer = false;
         var isNear = false;
         var memberCount = 1;
@@ -188,7 +188,7 @@ public class Parser(StructurizerSettings config) {
         
         int memberSize = isPointer ? isNear ? SizeInBytes.Of16Bits : SizeInBytes.Of32Bits : GetSizeOf(memberType);
         
-        var variable = new Variable(memberName, memberType) {
+        var variable = new TypeDefinition(memberName, memberType) {
             Size = memberSize,
             Count = memberCount,
             IsPointer = isPointer,
@@ -248,7 +248,7 @@ public class Parser(StructurizerSettings config) {
         bool unique = enumType.Members.TryAdd(memberValue, memberName);
         if (!unique) {
             // group members with the same value together
-            enumType.Members[memberValue] += $" | {memberName}";
+            enumType.Members[memberValue] += $", {memberName}";
         }
     }
     
@@ -268,7 +268,7 @@ public class Parser(StructurizerSettings config) {
     }
     
     private int GetDynamicSizeOf(string type) {
-        if (_typeDefs.TryGetValue(type, out Variable? variable)) {
+        if (_typeDefs.TryGetValue(type, out TypeDefinition? variable)) {
             return variable.Size;
         }
         

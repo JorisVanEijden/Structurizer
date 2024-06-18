@@ -27,7 +27,7 @@ public class StructTests {
         resultStruct.Size.Should().Be(2);
         resultStruct.Name.Should().Be("testStruct");
         resultStruct.IsUnion.Should().BeFalse();
-        List<Variable> members = resultStruct.Members;
+        List<TypeDefinition> members = resultStruct.Members;
         members.Count.Should().Be(1);
         members[0].Name.Should().Be("testMember");
         members[0].Type.Should().Be("short");
@@ -134,7 +134,7 @@ public class StructTests {
         // Assert
         result.Should().NotBeNull();
         result.Structs.Should().ContainKey("testStruct");
-        Variable member = result.Structs["testStruct"].Members[0];
+        TypeDefinition member = result.Structs["testStruct"].Members[0];
         member.IsPointer.Should().BeTrue();
         member.IsNear.Should().BeFalse();
         member.Size.Should().Be(4);
@@ -157,7 +157,7 @@ public class StructTests {
         // Assert
         result.Should().NotBeNull();
         result.Structs.Should().ContainKey("testStruct");
-        Variable member = result.Structs["testStruct"].Members[0];
+        TypeDefinition member = result.Structs["testStruct"].Members[0];
         member.IsPointer.Should().BeTrue();
         member.IsNear.Should().BeTrue();
         member.Size.Should().Be(2);
@@ -180,7 +180,7 @@ public class StructTests {
         // Assert
         result.Should().NotBeNull();
         result.Structs.Should().ContainKey("testStruct");
-        Variable member = result.Structs["testStruct"].Members[0];
+        TypeDefinition member = result.Structs["testStruct"].Members[0];
         member.IsPointer.Should().BeTrue();
         member.IsNear.Should().BeTrue();
         member.Size.Should().Be(2);

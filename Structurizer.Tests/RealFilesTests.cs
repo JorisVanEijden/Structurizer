@@ -100,7 +100,7 @@ public class RealFilesTests {
         ReadOnlySpan<byte> bytes = new byte[] {
             0x02, 0x00, 0x03, 0x00, 0x00, 0x00, 0xFF, 0x00
         };
-        JsonNode result = formatter.Format(new Variable("var", "dialogAction_ApplyCondition"), bytes);
+        JsonNode result = formatter.Format(new TypeDefinition("var", "dialogAction_ApplyCondition"), bytes);
         
         // Assert
         result.ToJsonString().Should().Be("""{"target":2,"condition":"condition_drunk","minValue":0,"maxValue":255}""");
