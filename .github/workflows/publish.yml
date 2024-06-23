@@ -31,7 +31,7 @@ jobs:
         run: dotnet build --no-restore --configuration Release /p:Version=${{ env.VERSION }}
         
       - name: Test
-        run: dotnet test --no-build --verbosity normal
+        run: dotnet test --no-build --verbosity normal --configuration Release
         
       - name: pack nuget packages
         run: dotnet pack --output nupkgs --no-restore --no-build /p:PackageVersion=${{ env.VERSION }}
