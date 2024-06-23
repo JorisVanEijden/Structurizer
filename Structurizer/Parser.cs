@@ -3,7 +3,6 @@ namespace Structurizer;
 using Structurizer.Types;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -13,15 +12,15 @@ using System.Text.RegularExpressions;
 public class Parser(StructurizerSettings config) {
     private readonly Dictionary<string, EnumType> _enums = new();
     private readonly Dictionary<string, StructType> _structs = new();
-    
+
     private readonly Dictionary<string, TypeDefinition> _typeDefs = config.TypeDefs;
-    
+
     public StructureInformation ParseFile(string headerFilePath) {
         string text = File.ReadAllText(headerFilePath);
-        
+
         try {
             StructureInformation result = ParseSource(text);
-            
+
             return result;
         } finally {
             // Write formatted results to file for debugging
@@ -36,65 +35,65 @@ public class Parser(StructurizerSettings config) {
             }));
         }
     }
-    
+
     public StructureInformation ParseSource(string text) {
         text = PreProcess(text);
         ParseTypeDefs(text);
         ParseEnums(text);
         ParseStructs(text);
-        
+
         return new StructureInformation {
             Enums = _enums,
             Structs = _structs,
             TypeDefs = _typeDefs
         };
     }
-    
-    private bool TryParseTypeDef(Match match, [NotNullWhen(true)] out TypeDefinition? variable) {
+
+    private bool TryParseTypeDef(Match match, out TypeDefinition variable) {
         try {
             variable = ParseMember(match.Groups[1].Value.Trim());
-            
+
             return true;
         } catch (ArgumentException) {
-            variable = null;
-            
+            variable = default;
+
             return false;
         }
     }
-    
+
     private void ParseTypeDefs(string text) {
         const string typedefPattern = @"typedef\s+(.+);";
         MatchCollection matches = Regex.Matches(text, typedefPattern);
-        
+
         foreach (Match match in matches) {
-            if (TryParseTypeDef(match, out TypeDefinition? variable)) {
+            if (TryParseTypeDef(match, out TypeDefinition variable)) {
                 _typeDefs[variable.Name] = variable;
             }
         }
     }
-    
+
     private void ParseStructs(string text) {
         const string structPattern = @"(struct|union)(?:\s*__attribute__[^\s]+)*\s+(\w+)\s*{([^}]*)}";
         MatchCollection matches = Regex.Matches(text, structPattern, RegexOptions.Multiline);
-        
+
         foreach (Match match in matches) {
             ParseStruct(match);
         }
     }
-    
+
     private void ParseStruct(Match match) {
         string type = match.Groups[1].Value;
         string structName = match.Groups[2].Value;
         string structMembers = match.Groups[3].Value;
-        
+
         var structType = new StructType(structName) {
             IsUnion = type == "union"
         };
-        
+
         var members = structMembers.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(member => member.Trim()).ToList();
-        
+
         var maxSize = 0;
-        
+
         foreach (string? member in members) {
             if (string.IsNullOrWhiteSpace(member)) {
                 continue;
@@ -117,20 +116,21 @@ public class Parser(StructurizerSettings config) {
         }
         _structs[structName] = structType;
     }
-    
+
     private TypeDefinition ParseMember(string member) {
         var isPointer = false;
         var isNear = false;
         var memberCount = 1;
         var alignment = 1;
-        
+        var unsigned = false;
+
         int lastSpace = member.LastIndexOf(' ');
         if (lastSpace == -1) {
             throw new Exception($"Could not parse member '{member}'");
         }
         string fullType = member[..lastSpace].Trim();
         string memberName = member[(lastSpace + 1)..].Trim();
-        
+
         // Handle pointers
         if (memberName.Contains('*')) {
             isPointer = true;
@@ -138,13 +138,13 @@ public class Parser(StructurizerSettings config) {
             memberName = memberName.Replace("*", "");
             fullType += "*";
         }
-        
+
         // Handle array
         if (Regex.Match(memberName, @"\[(\d*)\]") is {Success: true} arrayMatch) {
             int.TryParse(arrayMatch.Groups[1].Value, out memberCount);
             memberName = Regex.Replace(memberName, @"\[\d*\]", string.Empty);
         }
-        
+
         // Loop through the type parts to handle special cases
         string[]? typeParts = fullType.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         for (var index = 0; index < typeParts.Length; index++) {
@@ -182,32 +182,37 @@ public class Parser(StructurizerSettings config) {
                 isNear = true;
                 var bitCount = int.Parse(pointerMatch.Groups[1].Value);
                 memberCount = bitCount / 16;
+            } else if (typePart == "unsigned") {
+                // Remove the unsigned keyword from the type
+                typeParts[index] = string.Empty;
+                unsigned = true;
             }
         }
         string memberType = string.Join(" ", typeParts).Trim();
-        
+
         int memberSize = isPointer ? isNear ? SizeInBytes.Of16Bits : SizeInBytes.Of32Bits : GetSizeOf(memberType);
-        
-        var variable = new TypeDefinition(memberName, memberType) {
+
+        var typeDefinition = new TypeDefinition(memberName, memberType) {
             Size = memberSize,
             Count = memberCount,
             IsPointer = isPointer,
             IsNear = isNear,
-            Alignment = alignment
+            Alignment = alignment,
+            Unsigned = unsigned
         };
-        
-        return variable;
+
+        return typeDefinition;
     }
-    
+
     private void ParseEnums(string text) {
         const string enumPattern = @"enum\s+(\w+)\s*:?\s*([^{;]*)?\s*{([^}]*)}";
         MatchCollection matches = Regex.Matches(text, enumPattern, RegexOptions.Multiline);
-        
+
         foreach (Match match in matches) {
             ParseEnum(match);
         }
     }
-    
+
     private void ParseEnum(Match match) {
         string enumName = match.Groups[1].Value.Trim();
         string backingType = match.Groups[2].Value.Trim();
@@ -215,27 +220,27 @@ public class Parser(StructurizerSettings config) {
             backingType = config.DefaultEnumBackingType;
         }
         string enumMembers = match.Groups[3].Value;
-        
+
         var enumType = new EnumType {
             MemberSize = GetSizeOf(backingType)
         };
-        
+
         string[]? members = enumMembers.Split(',', StringSplitOptions.RemoveEmptyEntries);
-        
+
         for (var i = 0; i < members.Length; i++) {
             ParseEnumMember(members, i, enumType);
         }
-        
+
         _enums[enumName] = enumType;
     }
-    
+
     private static void ParseEnumMember(string[] members, int i, EnumType enumType) {
         string member = members[i].Trim();
         if (string.IsNullOrWhiteSpace(member)) {
             return;
         }
         string memberName = member;
-        
+
         string[]? memberParts = member.Split('=');
         long memberValue;
         if (memberParts.Length == 2) {
@@ -251,7 +256,7 @@ public class Parser(StructurizerSettings config) {
             enumType.Members[memberValue] += $", {memberName}";
         }
     }
-    
+
     private int GetSizeOf(string type) {
         var multiplier = 1;
         type = type.Replace("unsigned", "")
@@ -261,28 +266,28 @@ public class Parser(StructurizerSettings config) {
             type = type[(type.LastIndexOf(" ", StringComparison.Ordinal) + 1)..];
             multiplier = 2;
         }
-        
+
         int size = GetDynamicSizeOf(type);
-        
+
         return size * multiplier;
     }
-    
+
     private int GetDynamicSizeOf(string type) {
-        if (_typeDefs.TryGetValue(type, out TypeDefinition? variable)) {
+        if (_typeDefs.TryGetValue(type, out TypeDefinition variable)) {
             return variable.Size;
         }
-        
+
         if (_enums.TryGetValue(type, out EnumType? enumType)) {
             return enumType.MemberSize;
         }
-        
+
         if (_structs.TryGetValue(type, out StructType? structType)) {
             return structType.Size;
         }
-        
+
         throw new ArgumentException($"Could not determine size of type '{type}'", nameof(type));
     }
-    
+
     private static long IntParse(string input) {
         if (string.IsNullOrWhiteSpace(input)) {
             return 0;
@@ -295,18 +300,18 @@ public class Parser(StructurizerSettings config) {
         } catch (Exception e) {
             throw new ArgumentException($"Could not parse int from '{input}'", e);
         }
-        
+
         return result;
     }
-    
+
     private static string PreProcess(string text) {
         return StripComments(text);
     }
-    
+
     private static string StripComments(string text) {
         // from https://stackoverflow.com/questions/36454069/how-to-remove-c-style-comments-from-code
         const string comments = """/(?:\/\/(?:\\\n|[^\n])*\n)|(?:\/\*[\s\S]*?\*\/)|((?:R"([^(\\\s]{0,16})\([^)]*\)\2")|(?:@"[^"]*?")|(?:"(?:\?\?'|\\\\|\\"|\\\n|[^"])*?")|(?:'(?:\\\\|\\'|\\\n|[^'])*?'))/g""";
-        
+
         return Regex.Replace(text, comments, string.Empty, RegexOptions.Multiline);
     }
 }

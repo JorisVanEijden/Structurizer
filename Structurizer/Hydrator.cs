@@ -16,8 +16,8 @@ public class Hydrator {
         TypeDefs = parseResult?.TypeDefs.Any() is true ? parseResult.TypeDefs : config.TypeDefs;
     }
 
-    public virtual Variable Hydrate(TypeDefinition typeDefinition, ReadOnlySpan<byte> bytes) {
-        if (typeDefinition.IsArray && typeDefinition.Type != "char") {
+    public StructureMember Hydrate(TypeDefinition typeDefinition, ReadOnlySpan<byte> bytes) {
+        if (typeDefinition.IsArray) {
             return HydrateArray(typeDefinition, bytes);
         }
 
@@ -32,86 +32,62 @@ public class Hydrator {
         return HydrateType(typeDefinition, bytes);
     }
 
-    protected virtual ArrayMember HydrateArray(TypeDefinition typeDefinition, ReadOnlySpan<byte> data) {
-        var singleVariable = new TypeDefinition(typeDefinition.Name, typeDefinition.Type, typeDefinition.Size) {
-            Count = 1,
-            IsPointer = typeDefinition.IsPointer,
-            IsNear = typeDefinition.IsNear,
-            Alignment = typeDefinition.Alignment
+    protected virtual StructureMember HydrateArray(TypeDefinition typeDefinition, ReadOnlySpan<byte> bytes) {
+        if (bytes.Length < typeDefinition.Length) {
+            throw new ArgumentOutOfRangeException(nameof(bytes), "Byte array is too small for the array");
+        }
+        var result = new StructureMember(typeDefinition.Name, typeDefinition, bytes.ToArray()) {
+            Members = new List<StructureMember>()
         };
-
-        int numberOfItems = data.Length / singleVariable.Size;
-        var items = new List<Variable>(numberOfItems);
+        TypeDefinition singleVariable = typeDefinition with {
+            Count = 1
+        };
 
         for (var index = 0; index < typeDefinition.Length; index += singleVariable.Size) {
-            byte[]? slice = data.Slice(index, singleVariable.Size).ToArray();
-            var item = Hydrate(singleVariable, slice);
-            items.Add(item);
+            ReadOnlySpan<byte> slice = bytes.Slice(index, singleVariable.Size);
+            StructureMember member = Hydrate(singleVariable, slice);
+            result.Members.Add(member);
         }
 
-        return new ArrayMember(typeDefinition, data, items);
+        return result;
     }
 
-    protected virtual Variable HydrateType(TypeDefinition typeDefinition, ReadOnlySpan<byte> bytes) {
-        switch (typeDefinition.Type) {
-            case "short" or "int":
-                return new ShortMember(typeDefinition, bytes);
-            case "unsigned short" or "unsigned int":
-                return new UnsignedShortMember(typeDefinition, bytes);
-            case "long":
-                return new LongMember(typeDefinition, bytes);
-            case "unsigned long":
-                return new UnsignedLongMember(typeDefinition, bytes);
-        }
-        switch (typeDefinition) {
-            case {Type: "char", IsArray: true}:
-                return new StringMember(typeDefinition, bytes);
-            case {Type: "char", IsArray: false}:
-                return new CharMember(typeDefinition, bytes);
+    protected virtual StructureMember HydrateType(TypeDefinition typeDefinition, ReadOnlySpan<byte> bytes) {
+        if (bytes.Length < typeDefinition.Length) {
+            throw new ArgumentOutOfRangeException(nameof(bytes), "Byte array is too small for the type");
         }
 
-        if (TypeDefs != null && TypeDefs.TryGetValue(typeDefinition.Type, out TypeDefinition? knownTypeDef)) {
-            return Hydrate(knownTypeDef, bytes);
-        }
-
-        if (typeDefinition.IsPointer) {
-            return new PointerMember(typeDefinition, bytes);
-        }
-
-        throw new NotSupportedException($"Type {typeDefinition.Type} not supported");
+        return new StructureMember(typeDefinition.Name, typeDefinition, bytes.ToArray());
     }
 
-    protected virtual EnumMember HydrateEnum(TypeDefinition typeDefinition, EnumType enumType, ReadOnlySpan<byte> bytes) {
-        uint value = enumType.MemberSize switch {
-            1 => bytes[0],
-            2 => BitConverter.ToUInt16(bytes),
-            4 => BitConverter.ToUInt32(bytes),
-            _ => throw new NotSupportedException($"Enum member size {enumType.MemberSize} not supported")
+    protected virtual StructureMember HydrateEnum(TypeDefinition typeDefinition, EnumType enumType, ReadOnlySpan<byte> bytes) {
+        if (bytes.Length < enumType.MemberSize) {
+            throw new ArgumentOutOfRangeException(nameof(bytes), "Byte array is too small for the enum");
+        }
+        TypeDefinition type = typeDefinition with {
+            EnumType = enumType
         };
 
-        if (enumType.Members.TryGetValue(value, out string name)) {
-            return new EnumMember(typeDefinition, bytes, enumType, name);
-        }
-
-        throw new ArgumentOutOfRangeException(nameof(bytes), $"Enum value {value} not found in enum");
+        return new StructureMember(typeDefinition.Name, type, bytes.ToArray());
     }
 
-    public virtual StructMember HydrateStruct(TypeDefinition typeDefinition, StructType structType, ReadOnlySpan<byte> bytes) {
+    protected virtual StructureMember HydrateStruct(TypeDefinition typeDefinition, StructType structType, ReadOnlySpan<byte> bytes) {
         if (bytes.Length < structType.Size) {
             throw new ArgumentOutOfRangeException(nameof(bytes), "Byte array is too small for the struct");
         }
 
-        var members = new List<Variable>();
+        var result = new StructureMember(typeDefinition.Name, typeDefinition, bytes.ToArray()) {
+            Members = []
+        };
 
         ReadOnlySpan<byte> structBytes = bytes[..structType.Size];
         var index = 0;
-        foreach (TypeDefinition? member in structType.Members) {
+        foreach (TypeDefinition member in structType.Members) {
             ReadOnlySpan<byte> memberBytes = structBytes.Slice(index, member.Length);
-            var memberValue = Hydrate(member, memberBytes);
-            members.Add(memberValue);
+            result.Members.Add(Hydrate(member, memberBytes));
             index += member.Length;
         }
 
-        return new StructMember(typeDefinition, bytes, structType, members);
+        return result;
     }
 }
