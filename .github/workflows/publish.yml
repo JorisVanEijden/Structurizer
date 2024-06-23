@@ -37,6 +37,6 @@ jobs:
         run: dotnet pack --output nupkgs --no-restore --no-build --configuration Release /p:PackageVersion=${{ env.VERSION }}
         
       - name: upload nuget package
-        run: dotnet nuget push nupkgs/*.nupkg
+        run: dotnet nuget push nupkgs/*.nupkg --source "github" --skip-duplicate
         env:
           NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
