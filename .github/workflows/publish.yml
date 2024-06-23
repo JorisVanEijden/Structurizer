@@ -34,7 +34,7 @@ jobs:
         run: dotnet test --no-build --verbosity normal --configuration Release
         
       - name: pack nuget packages
-        run: dotnet pack --output nupkgs --no-restore --no-build --configuration Release --skip-duplicate /p:PackageVersion=${{ env.VERSION }}
+        run: dotnet pack --output nupkgs --no-restore --no-build --configuration Release /p:PackageVersion=${{ env.VERSION }}
         
       - name: upload nuget package
         run: dotnet nuget push nupkgs/*.nupkg
