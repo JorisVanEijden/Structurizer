@@ -12,31 +12,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        
+
       - name: Set Version Variable
         shell: bash
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
-        
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
-        env:
-          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          
+
       - name: Restore dependencies
         run: dotnet restore
-        
+
       - name: Build
         run: dotnet build --no-restore --configuration Release /p:Version=${{ env.VERSION }}
-        
+
       - name: Test
         run: dotnet test --no-build --verbosity normal --configuration Release
-        
+
       - name: pack nuget packages
         run: dotnet pack --output nupkgs --no-restore --no-build --configuration Release /p:PackageVersion=${{ env.VERSION }}
-        
+
+      - name: Add github source
+        run: dotnet nuget add source --username JortisVanEijden --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/OWNER/index.json"
+
       - name: upload nuget package
         run: dotnet nuget push nupkgs/*.nupkg --source "github" --skip-duplicate
-        env:
-          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
