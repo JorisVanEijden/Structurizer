@@ -10,11 +10,10 @@
         <Description>Small utility to parse C header files produced by IDA and Ghidra</Description>
         <Copyright>2024</Copyright>
         <PackageProjectUrl>https://github.com/JorisVanEijden/Structurizer</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/JorisVanEijden/Structurizer/blob/develop/LICENSE</PackageLicenseUrl>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <RepositoryUrl>https://github.com/JorisVanEijden/Structurizer</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageIcon>logo.png</PackageIcon>
-        <Version>1.1.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
@@ -27,6 +26,7 @@
 
     <ItemGroup>
         <None Include="logo.png" Pack="true" PackagePath=""/>
+        <None Include="../LICENSE" Pack="true" PackagePath=""/>
     </ItemGroup>
 
 </Project>
