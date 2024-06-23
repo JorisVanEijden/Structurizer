@@ -1,0 +1,38 @@
+# This workflow will build, test, pack and publish a nuget package when a v*.*.* tag is pushed
+
+name: .NET Build, Test, and Publish Nuget Package
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set Version Variable
+        shell: bash
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release /p:Version=${{ env.VERSION }}
+
+      - name: Test
+        run: dotnet test --no-build --verbosity normal --configuration Release
+
+      - name: pack nuget packages
+        run: dotnet pack --output nupkgs --no-restore --no-build --configuration Release /p:PackageVersion=${{ env.VERSION }}
+
+      - name: upload nuget package
+        run: dotnet nuget push nupkgs/*.nupkg --source 'https://api.nuget.org/v3/index.json' --skip-duplicate --api-key ${{ secrets.NUGET_KEY }}
