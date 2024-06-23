@@ -184,6 +184,6 @@ public class EnumTests {
         result.Enums.Should().ContainKey("testEnum");
         Dictionary<long, string> members = result.Enums["testEnum"].Members;
         members.Count.Should().Be(1);
-        members[123].Should().Be("first | second");
+        members[123].Should().Be("first, second");
     }
 }
