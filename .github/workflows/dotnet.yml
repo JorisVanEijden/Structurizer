@@ -1,4 +1,4 @@
-# This workflow will build a .NET project
+# This workflow will build and test a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
 name: .NET
@@ -14,26 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set Version Variable
-        if: ${{ github.ref_type == 'tag' }}
-        env:
-          TAG: ${{ github.ref_name }}
-        run: echo "VERSION=${TAG#v}" >> $GITHUB_ENV
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
-        env:
-          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Restore dependencies
         run: dotnet restore
       - name: Build
-        run: dotnet build --no-restore /p:Version=$VERSION
+        run: dotnet build --no-restore
       - name: Test
         run: dotnet test --no-build --verbosity normal
-      - name: pack nuget packages
-        if: github.ref_type == 'tag' && startsWith(github.ref, 'refs/tags/v')
-        run: dotnet pack --output nupkgs --no-restore --no-build /p:PackageVersion=$VERSION
-      - name: upload nuget package
-        if: github.ref_type == 'tag' && startsWith(github.ref, 'refs/tags/v')
-        run: dotnet nuget push nupkgs/*.nupkg
