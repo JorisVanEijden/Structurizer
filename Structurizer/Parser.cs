@@ -6,40 +6,34 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 
 public class Parser(StructurizerSettings config) {
     private readonly Dictionary<string, EnumType> _enums = new();
     private readonly Dictionary<string, StructType> _structs = new();
-
-    private readonly Dictionary<string, TypeDefinition> _typeDefs = config.TypeDefs;
+    private Dictionary<string, TypeDefinition> _typeDefs = config.TypeDefs;
 
     public StructureInformation ParseFile(string headerFilePath) {
         string text = File.ReadAllText(headerFilePath);
 
-        try {
-            StructureInformation result = ParseSource(text);
+        return ParseSource(text);
+    }
 
-            return result;
-        } finally {
-            // Write formatted results to file for debugging
-            File.WriteAllText($"{headerFilePath}_typedefs.json", JsonSerializer.Serialize(_typeDefs, new JsonSerializerOptions {
-                WriteIndented = true
-            }));
-            File.WriteAllText($"{headerFilePath}_enums.json", JsonSerializer.Serialize(_enums, new JsonSerializerOptions {
-                WriteIndented = true
-            }));
-            File.WriteAllText($"{headerFilePath}_structs.json", JsonSerializer.Serialize(_structs, new JsonSerializerOptions {
-                WriteIndented = true
-            }));
-        }
+    public void Clear() {
+        _typeDefs = config.TypeDefs;
+        _enums.Clear();
+        _structs.Clear();
     }
 
     public StructureInformation ParseSource(string text) {
+        Clear();
+        // Preprocess the text to make it more suitable for regex matching
         text = PreProcess(text);
+        // TypeDefs need to be parsed first, so we can determine the size of other types
         ParseTypeDefs(text);
+        // Enums need to be parsed before structs, as they can be used as member types
         ParseEnums(text);
+        // Structs need to be parsed last, as they can contain members of other types
         ParseStructs(text);
 
         return new StructureInformation {
