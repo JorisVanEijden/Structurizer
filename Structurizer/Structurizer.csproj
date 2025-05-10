@@ -8,7 +8,7 @@
         <Title>Structurizer</Title>
         <Authors>Joris van Eijden</Authors>
         <Description>Small utility to parse C header files produced by IDA and Ghidra</Description>
-        <Copyright>2024</Copyright>
+        <Copyright>2025</Copyright>
         <PackageProjectUrl>https://github.com/JorisVanEijden/Structurizer</PackageProjectUrl>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -16,6 +16,7 @@
         <RepositoryType>git</RepositoryType>
         <PackageIcon>logo.png</PackageIcon>
         <PackageId>JvE.Structurizer</PackageId>
+        <Version>1.2.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
