@@ -67,7 +67,7 @@ public class Parser(StructurizerSettings config) {
     }
 
     private void ParseStructs(string text) {
-        const string structPattern = @"(struct|union)(?:\s*__attribute__[^\s]+)*\s+(\w+)\s*{([^}]*)}";
+        const string structPattern = @"(struct|union)(?:\s+__[^\s]+)*\s+(\w+)\s*{([^}]*)}";
         MatchCollection matches = Regex.Matches(text, structPattern, RegexOptions.Multiline);
 
         foreach (Match match in matches) {
@@ -118,10 +118,13 @@ public class Parser(StructurizerSettings config) {
         var alignment = 1;
         var unsigned = false;
 
+        member = StripIdaDataRepresentationAttributes(member);
+        
         int lastSpace = member.LastIndexOf(' ');
         if (lastSpace == -1) {
             throw new Exception($"Could not parse member '{member}'");
         }
+
         string fullType = member[..lastSpace].Trim();
         string memberName = member[(lastSpace + 1)..].Trim();
 
@@ -129,7 +132,7 @@ public class Parser(StructurizerSettings config) {
         if (memberName.Contains('*')) {
             isPointer = true;
             // Move the pointer symbol to the type
-            memberName = memberName.Replace("*", "");
+            memberName = memberName.Replace("*", string.Empty);
             fullType += "*";
         }
 
@@ -198,8 +201,58 @@ public class Parser(StructurizerSettings config) {
         return typeDefinition;
     }
 
+    private string StripIdaDataRepresentationAttributes(string member) {
+        if (string.IsNullOrEmpty(member))
+            return member;
+
+        // Define patterns to match IDA data representation attributes
+        string[] simpleAttributes = {
+            "__bin", "__oct", "__hex", "__dec", "__sbin", "__soct", "__shex", "__udec", "__float", "__char", "__segm", "__invsign", "__invbits", "__lzero"
+        };
+
+        // Attributes with parentheses that can contain anything
+        string[] attributesWithParentheses = {
+            "__enum", "__off", "__offset", "__strlit", "__custom", "__tabform"
+        };
+
+        // Split the member string by spaces
+        string[] parts = member.Split(' ');
+        var filteredParts = new List<string>();
+
+        foreach (string part in parts) {
+            var shouldKeep = true;
+
+            // Check for simple attributes
+            foreach (string attr in simpleAttributes) {
+                if (part.Equals(attr, StringComparison.OrdinalIgnoreCase)) {
+                    shouldKeep = false;
+
+                    break;
+                }
+            }
+
+            // Check for attributes with parentheses
+            if (shouldKeep) {
+                foreach (string attr in attributesWithParentheses) {
+                    var pattern = $@"{attr}\(.*?\)";
+                    if (Regex.IsMatch(part, pattern, RegexOptions.IgnoreCase)) {
+                        shouldKeep = false;
+
+                        break;
+                    }
+                }
+            }
+
+            if (shouldKeep) {
+                filteredParts.Add(part);
+            }
+        }
+
+        return string.Join(" ", filteredParts);
+    }
+
     private void ParseEnums(string text) {
-        const string enumPattern = @"enum\s+(\w+)\s*:?\s*([^{;]*)?\s*{([^}]*)}";
+        const string enumPattern = @"enum\s+(?:__\w+ )*\$?(\w+)\s*:?\s*([^{;]*)?\s*{([^}]*)}";
         MatchCollection matches = Regex.Matches(text, enumPattern, RegexOptions.Multiline);
 
         foreach (Match match in matches) {
@@ -253,9 +306,7 @@ public class Parser(StructurizerSettings config) {
 
     private int GetSizeOf(string type) {
         var multiplier = 1;
-        type = type.Replace("unsigned", "")
-            .Replace("signed", "")
-            .Trim();
+        type = type.Replace("unsigned", string.Empty).Replace("signed", "").Trim();
         if (type.StartsWith("long ")) {
             type = type[(type.LastIndexOf(" ", StringComparison.Ordinal) + 1)..];
             multiplier = 2;
@@ -286,16 +337,23 @@ public class Parser(StructurizerSettings config) {
         if (string.IsNullOrWhiteSpace(input)) {
             return 0;
         }
+        input = input.TrimEnd('u'); // unsigned
+        int sign = input.StartsWith('-') ? -1 : 1;
+        input = input.TrimStart('-');
         long result;
         try {
-            result = input.StartsWith("0x")
-                ? long.Parse(input[2..], NumberStyles.HexNumber)
-                : long.Parse(input);
+            if (input.StartsWith("0x")) {
+                result = long.Parse(input[2..], NumberStyles.HexNumber);
+            } else if (input.StartsWith("0b")) {
+                result = Convert.ToInt64(input[2..], 2);
+            } else {
+                result = long.Parse(input);
+            }
         } catch (Exception e) {
             throw new ArgumentException($"Could not parse int from '{input}'", e);
         }
 
-        return result;
+        return result * sign;
     }
 
     private static string PreProcess(string text) {

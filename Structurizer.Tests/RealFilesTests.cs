@@ -89,5 +89,6 @@ public class RealFilesTests {
     public static IEnumerable<object[]> GetTestFiles() {
         yield return ["ida.h.sample"];
         yield return ["ghidra.h.sample"];
+        yield return ["ida9.h.sample"];
     }
 }

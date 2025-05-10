@@ -53,6 +53,30 @@ public class EnumTests {
     }
     
     [Fact]
+    public void EnumWithBitmask_ShouldParseNormally() {
+        // Arrange
+        var parser = new Parser(new StructurizerSettings());
+        const string text = """
+                            enum __bitmask testEnum
+                            {
+                                first,
+                                second,
+                                third,
+                                fourth,
+                            };
+                            """;
+        
+        // Act
+        StructureInformation result = parser.ParseSource(text);
+        
+        // Assert
+        result.Enums.Should().ContainKey("testEnum");
+        Dictionary<long, string> members = result.Enums["testEnum"].Members;
+        members.Count.Should().Be(4);
+        members[2].Should().Be("third");
+    }
+    
+    [Fact]
     public void EnumWithValues_ShouldUseValues() {
         // Arrange
         var parser = new Parser(new StructurizerSettings());

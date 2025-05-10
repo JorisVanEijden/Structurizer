@@ -209,4 +209,25 @@ public class StructTests {
         result.Structs.Should().ContainKey("outerStruct");
         result.Structs[result.Structs["outerStruct"].Members[0].Type].Members[0].Type.Should().Be("__int8");
     }
+    
+    [Fact]
+    public void StructsWithIdaAttributes_ShouldBeParsedCorrectly() {
+        // Arrange
+        var parser = new Parser(new StructurizerSettings());
+        const string text = """
+                            struct testStruct
+                            {
+                              int structMember __tabform(,8);        ///< heap pointer
+                            };
+                            """;
+        
+        // Act
+        StructureInformation result = parser.ParseSource(text);
+        
+        // Assert
+        result.Should().NotBeNull();
+        result.Structs.Should().ContainKey("testStruct");
+        TypeDefinition member = result.Structs["testStruct"].Members[0];
+        member.Size.Should().Be(2);
+    }
 }
